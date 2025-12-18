@@ -1,10 +1,19 @@
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 import Swal from 'sweetalert2';
 import useAuth from '../../hooks/useAuth';
 
 const Register = () => {
-    const { register, handleSubmit, reset, formState: { errors } } = useForm();
+    const { 
+        register, 
+        handleSubmit, 
+        reset, 
+        formState: { errors, isSubmitted }
+    } = useForm({
+        mode: 'onChange'
+    });
+    
     const { createUser, updateUserProfile, googleSignIn } = useAuth(); 
     const navigate = useNavigate();
 
@@ -82,7 +91,10 @@ const Register = () => {
                             className="input input-bordered w-full" 
                             {...register("name", { required: true })} 
                         />
-                        {errors.name && <span className="text-red-500 text-xs mt-1">Name is required</span>}
+                        {/* Only show 'Required' error if submitted */}
+                        {errors.name && (isSubmitted || errors.name.type !== 'required') && (
+                            <span className="text-red-500 text-xs mt-1">Name is required</span>
+                        )}
                     </div>
 
                     {/* Email Input */}
@@ -96,7 +108,9 @@ const Register = () => {
                             className="input input-bordered w-full" 
                             {...register("email", { required: true })} 
                         />
-                        {errors.email && <span className="text-red-500 text-xs mt-1">Email is required</span>}
+                        {errors.email && (isSubmitted || errors.email.type !== 'required') && (
+                            <span className="text-red-500 text-xs mt-1">Email is required</span>
+                        )}
                     </div>
 
                     {/* Photo URL Input */}
@@ -110,7 +124,9 @@ const Register = () => {
                             className="input input-bordered w-full" 
                             {...register("photoURL", { required: true })} 
                         />
-                        {errors.photoURL && <span className="text-red-500 text-xs mt-1">Photo URL is required</span>}
+                        {errors.photoURL && (isSubmitted || errors.photoURL.type !== 'required') && (
+                            <span className="text-red-500 text-xs mt-1">Photo URL is required</span>
+                        )}
                     </div>
 
                     {/* Role Selection */}
@@ -126,7 +142,9 @@ const Register = () => {
                             <option value="buyer">Buyer</option>
                             <option value="manager">Manager</option>
                         </select>
-                        {errors.role && <span className="text-red-500 text-xs mt-1">Role is required</span>}
+                        {errors.role && (isSubmitted || errors.role.type !== 'required') && (
+                            <span className="text-red-500 text-xs mt-1">Role is required</span>
+                        )}
                     </div>
 
                     {/* Password Input */}
@@ -150,7 +168,10 @@ const Register = () => {
                                 }
                             })} 
                         />
-                        {errors.password && <span className="text-red-500 text-xs mt-1">{errors.password.message}</span>}
+                        {errors.password && (
+                            (errors.password.type === 'required' && !isSubmitted) ? null : 
+                            <span className="text-red-500 text-xs mt-1">{errors.password.message}</span>
+                        )}
                     </div>
 
                     {/* Submit Button */}

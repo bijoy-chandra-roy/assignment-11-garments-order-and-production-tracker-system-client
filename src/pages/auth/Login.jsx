@@ -5,7 +5,13 @@ import useAuth from '../../hooks/useAuth';
 import Swal from 'sweetalert2';
 
 const Login = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { 
+        register, 
+        handleSubmit, 
+        formState: { errors, isSubmitted }
+    } = useForm({
+        mode: 'onChange'
+    });
     const { signIn, googleSignIn, user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
@@ -88,7 +94,9 @@ const Login = () => {
                             className="input input-bordered w-full" 
                             {...register("email", { required: true })} 
                         />
-                        {errors.email && <span className="text-red-500 text-xs mt-1">Email is required</span>}
+                        {errors.email && (isSubmitted || errors.email.type !== 'required') && (
+                            <span className="text-red-500 text-xs mt-1">Email is required</span>
+                        )}
                     </div>
 
                     {/* Password Input */}
@@ -102,7 +110,9 @@ const Login = () => {
                             className="input input-bordered w-full" 
                             {...register("password", { required: true })} 
                         />
-                        {errors.password && <span className="text-red-500 text-xs mt-1">Password is required</span>}
+                        {errors.password && (isSubmitted || errors.password.type !== 'required') && (
+                            <span className="text-red-500 text-xs mt-1">Password is required</span>
+                        )}
                         <label className="label">
                             <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
                         </label>
