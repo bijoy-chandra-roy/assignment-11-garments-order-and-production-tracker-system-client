@@ -1,0 +1,7 @@
+[
+    { "id": 1, "name": "Dhaka HQ", "lat": 23.8103, "lng": 90.4125, "type": "Headquarters" },
+    { "id": 2, "name": "Chittagong Port Hub", "lat": 22.3569, "lng": 91.7832, "type": "Shipping Port" },
+    { "id": 3, "name": "Gazipur Factory", "lat": 23.9999, "lng": 90.4203, "type": "Production" },
+    { "id": 4, "name": "Narayanganj Unit", "lat": 23.6238, "lng": 90.5000, "type": "Knitting" },
+    { "id": 5, "name": "Savar EPZ", "lat": 23.8483, "lng": 90.2672, "type": "Finishing" }
+]

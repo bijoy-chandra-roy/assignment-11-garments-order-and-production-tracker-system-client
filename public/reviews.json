@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "userName": "John Doe",
+    "ratings": 5,
+    "review": "High-quality fabric and perfect stitching. The production tracking kept me informed at every stage.",
+    "user_photoURL": "https://randomuser.me/api/portraits/men/10.jpg",
+    "designation": "Retail Buyer"
+  },
+  {
+    "id": 2,
+    "userName": "Jane Smith",
+    "ratings": 4,
+    "review": "Great experience overall. The bulk order was delivered on time, and the quality was consistent.",
+    "user_photoURL": "https://randomuser.me/api/portraits/women/25.jpg",
+    "designation": "Boutique Owner"
+  },
+  {
+    "id": 3,
+    "userName": "Alex Brown",
+    "ratings": 5,
+    "review": "Excellent factory management! The interface is very intuitive for tracking my garment orders.",
+    "user_photoURL": "https://randomuser.me/api/portraits/men/34.jpg",
+    "designation": "Fashion Designer"
+  },
+  {
+    "id": 4,
+    "userName": "Sarah Wilson",
+    "ratings": 4,
+    "review": "Reliable service. The finishing on the jackets was top-notch. Will definitely order again.",
+    "user_photoURL": "https://randomuser.me/api/portraits/women/42.jpg",
+    "designation": "Brand Manager"
+  },
+  {
+    "id": 5,
+    "userName": "Michael Chen",
+    "ratings": 5,
+    "review": "The real-time tracking feature is a game changer for our supply chain planning.",
+    "user_photoURL": "https://randomuser.me/api/portraits/men/22.jpg",
+    "designation": "Supply Chain Lead"
+  }
+]
