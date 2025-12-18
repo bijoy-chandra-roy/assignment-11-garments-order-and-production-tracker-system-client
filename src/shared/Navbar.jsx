@@ -1,18 +1,34 @@
 import React from 'react';
-import { Link, NavLink } from 'react-router';
+import { Link, NavLink, useNavigate } from 'react-router';
 import Logo from '../components/common/Logo';
 import ThemeToggle from '../components/common/ThemeToggle';
+import useAuth from '../hooks/useAuth';
 
 const Navbar = () => {
-    const user = null;
+    const { user, logOut } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            await logOut();
+            navigate('/login');
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    };
+
+    const navLinkStyles = ({ isActive }) =>
+        isActive
+            ? "font-bold text-primary bg-primary/10 rounded-lg px-4 py-2"
+            : "font-medium hover:text-primary transition-colors rounded-lg px-4 py-2";
 
     const links = <>
-        <li><NavLink to="/">Home</NavLink></li>
-        <li><NavLink to="/products">All Products</NavLink></li>
-        <li><NavLink to="/about">About Us</NavLink></li>
-        <li><NavLink to="/contact">Contact</NavLink></li>
+        <li><NavLink to="/" className={navLinkStyles}>Home</NavLink></li>
+        <li><NavLink to="/products" className={navLinkStyles}>All Products</NavLink></li>
+        <li><NavLink to="/about" className={navLinkStyles}>About Us</NavLink></li>
+        <li><NavLink to="/contact" className={navLinkStyles}>Contact</NavLink></li>
         {
-            user && <li><NavLink to="/dashboard">Dashboard</NavLink></li>
+            user && <li><NavLink to="/dashboard" className={navLinkStyles}>Dashboard</NavLink></li>
         }
     </>
 
@@ -25,7 +41,7 @@ const Navbar = () => {
                     </div>
                     <ul
                         tabIndex="-1"
-                        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow gap-2">
                         {links}
                     </ul>
                 </div>
@@ -41,13 +57,20 @@ const Navbar = () => {
                 {
                     user ? <>
                         <div className="dropdown dropdown-end">
-                            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+                            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar ring ring-primary ring-offset-base-100 ring-offset-2">
                                 <div className="w-10 rounded-full">
-                                    <img alt="User" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                                    <img 
+                                        alt={user?.displayName || "User"} 
+                                        src={user?.photoURL || "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"} 
+                                    />
                                 </div>
                             </div>
-                            <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-                                <li><a>Logout</a></li>
+                            <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 border border-base-200">
+                                <li className="px-4 py-2 font-bold text-center border-b border-base-200 mb-2">
+                                    {user?.displayName || 'User'}
+                                </li>
+                                <li><Link to="/dashboard/profile">Profile</Link></li>
+                                <li><button onClick={handleLogout} className="text-error">Logout</button></li>
                             </ul>
                         </div>
                     </> : <>

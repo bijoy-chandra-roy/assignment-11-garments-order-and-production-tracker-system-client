@@ -1,4 +1,3 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 import Swal from 'sweetalert2';
@@ -6,7 +5,7 @@ import useAuth from '../../hooks/useAuth';
 
 const Register = () => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
-    const { createUser, updateUserProfile } = useAuth();
+    const { createUser, updateUserProfile, googleSignIn } = useAuth(); 
     const navigate = useNavigate();
 
     const onSubmit = (data) => {
@@ -38,6 +37,31 @@ const Register = () => {
                 });
             })
     };
+
+    const handleGoogleSignIn = () => {
+        googleSignIn()
+            .then(result => {
+                console.log(result.user);
+                Swal.fire({
+                    title: 'User Login Successful.',
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp'
+                    }
+                });
+                navigate('/');
+            })
+            .catch(error => {
+                console.error(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: error.message,
+                });
+            })
+    }
 
     return (
         <div className="card w-full max-w-md bg-base-100 shadow-2xl border border-base-200">
@@ -138,7 +162,10 @@ const Register = () => {
                 <div className="divider text-sm text-base-content/60 my-4">OR</div>
 
                 {/* Google Button */}
-                <button className="btn bg-white text-black border-[#e5e5e5] w-full hover:bg-gray-100 hover:border-gray-300">
+                <button 
+                    onClick={handleGoogleSignIn}
+                    className="btn bg-white text-black border-[#e5e5e5] w-full hover:bg-gray-100 hover:border-gray-300"
+                >
                     <svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                         <g>
                             <path d="m0 0H512V512H0" fill="#fff"></path>
@@ -152,7 +179,7 @@ const Register = () => {
                 </button>
 
                 <p className="text-center mt-4 text-sm text-base-content/70">
-                    Already have an account? <Link to="/auth/login" className="text-primary font-bold hover:underline">Login</Link>
+                    Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Login</Link>
                 </p>
             </div>
         </div>
