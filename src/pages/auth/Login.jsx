@@ -120,7 +120,7 @@ const Login = () => {
 
                     {/* Submit Button */}
                     <div className="form-control mt-4">
-                        <button className="btn btn-primary text-white text-lg w-full">Login</button>
+                        <button className="btn btn-primary text-lg w-full text-black">Login</button>
                     </div>
                 </form>
 

@@ -69,13 +69,13 @@ const Navbar = () => {
                                 <li className="px-4 py-2 font-bold text-center border-b border-base-200 mb-2">
                                     {user?.displayName || 'User'}
                                 </li>
-                                <li><Link to="/dashboard/profile">Profile</Link></li>
+                                <li><Link to="/profile">Profile</Link></li>
                                 <li><button onClick={handleLogout} className="text-error">Logout</button></li>
                             </ul>
                         </div>
                     </> : <>
                         <Link to="/login" className="btn btn-ghost">Login</Link>
-                        <Link to="/register" className="btn btn-primary text-white">Register</Link>
+                        <Link to="/register" className="btn btn-primary text-black">Register</Link>
                     </>
                 }
             </div>

@@ -16,7 +16,7 @@ const Banner = () => {
                 <div className='absolute top-0 left-0 w-full h-full bg-black/50 flex flex-col justify-center items-center text-white'>
                     <h2 className='text-5xl font-bold mb-4'>Precision in Every Stitch</h2>
                     <p className='text-xl mb-6'>Streamline your garment production workflow from cutting to delivery.</p>
-                    <button className='btn btn-primary'>View Products</button>
+                    <button className='btn btn-primary text-black'>View Products</button>
                 </div>
             </div>
             <div className='relative h-[600px]'>
@@ -24,7 +24,7 @@ const Banner = () => {
                 <div className='absolute top-0 left-0 w-full h-full bg-black/50 flex flex-col justify-center items-center text-white'>
                     <h2 className='text-5xl font-bold mb-4'>Efficient Order Tracking</h2>
                     <p className='text-xl mb-6'>Monitor your orders in real-time and ensure timely shipments.</p>
-                    <button className='btn btn-primary'>Track Order</button>
+                    <button className='btn btn-primary text-black'>Track Order</button>
                 </div>
             </div>
             <div className='relative h-[600px]'>
@@ -32,7 +32,7 @@ const Banner = () => {
                 <div className='absolute top-0 left-0 w-full h-full bg-black/50 flex flex-col justify-center items-center text-white'>
                     <h2 className='text-5xl font-bold mb-4'>Quality You Can Trust</h2>
                     <p className='text-xl mb-6'>Managing production stages with highest standards of quality control.</p>
-                    <button className='btn btn-primary'>Learn More</button>
+                    <button className='btn btn-primary text-black'>Learn More</button>
                 </div>
             </div>
         </Carousel>

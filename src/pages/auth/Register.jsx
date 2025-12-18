@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 import Swal from 'sweetalert2';
 import useAuth from '../../hooks/useAuth';
+import axios from 'axios';
 
 const Register = () => {
     const { 
@@ -17,34 +18,50 @@ const Register = () => {
     const { createUser, updateUserProfile, googleSignIn } = useAuth(); 
     const navigate = useNavigate();
 
-    const onSubmit = (data) => {
-        createUser(data.email, data.password)
-            .then(result => {
-                const loggedUser = result.user;
-                console.log(loggedUser);
-                updateUserProfile(data.name, data.photoURL)
-                    .then(() => {
-                        console.log('user profile info updated');
-                        reset();
-                        Swal.fire({
-                            position: 'top-end',
-                            icon: 'success',
-                            title: 'User created successfully.',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                        navigate('/');
+    const onSubmit = async (data) => {
+        const imageFile = { image: data.image[0] }
+        const formData = new FormData();
+        formData.append('image', imageFile.image);
+
+        try {
+            const res = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_imgbb_api_key}`, formData);
+
+            if (res.data.success) {
+                const imageUrl = res.data.data.display_url;
+
+                createUser(data.email, data.password)
+                    .then(result => {
+                        updateUserProfile(data.name, imageUrl)
+                            .then(() => {
+                                reset();
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'User created successfully.',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                                navigate('/');
+                            })
+                            .catch(error => console.log(error))
                     })
-                    .catch(error => console.log(error))
-            })
-            .catch(error => {
-                console.log(error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: error.message,
-                });
-            })
+                    .catch(error => {
+                        console.log(error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: error.message,
+                        });
+                    })
+            }
+        } catch (error) {
+            console.error(error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Upload Failed',
+                text: 'Could not upload image.',
+            });
+        }
     };
 
     const handleGoogleSignIn = () => {
@@ -80,7 +97,6 @@ const Register = () => {
                 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     
-                    {/* Name Input */}
                     <div className="form-control">
                         <label className="label pt-0">
                             <span className="label-text font-semibold">Full Name</span>
@@ -91,13 +107,11 @@ const Register = () => {
                             className="input input-bordered w-full" 
                             {...register("name", { required: true })} 
                         />
-                        {/* Only show 'Required' error if submitted */}
                         {errors.name && (isSubmitted || errors.name.type !== 'required') && (
                             <span className="text-red-500 text-xs mt-1">Name is required</span>
                         )}
                     </div>
 
-                    {/* Email Input */}
                     <div className="form-control">
                         <label className="label pt-0">
                             <span className="label-text font-semibold">Email Address</span>
@@ -113,23 +127,21 @@ const Register = () => {
                         )}
                     </div>
 
-                    {/* Photo URL Input */}
                     <div className="form-control">
                         <label className="label pt-0">
-                            <span className="label-text font-semibold">Photo URL</span>
+                            <span className="label-text font-semibold">Profile Picture</span>
                         </label>
                         <input 
-                            type="text" 
-                            placeholder="Paste photo URL" 
-                            className="input input-bordered w-full" 
-                            {...register("photoURL", { required: true })} 
+                            type="file" 
+                            className="file-input file-input-bordered w-full" 
+                            accept='image/*'
+                            {...register("image", { required: true })} 
                         />
-                        {errors.photoURL && (isSubmitted || errors.photoURL.type !== 'required') && (
-                            <span className="text-red-500 text-xs mt-1">Photo URL is required</span>
+                        {errors.image && (isSubmitted || errors.image.type !== 'required') && (
+                            <span className="text-red-500 text-xs mt-1">Image is required</span>
                         )}
                     </div>
 
-                    {/* Role Selection */}
                     <div className="form-control">
                         <label className="label pt-0">
                             <span className="label-text font-semibold">Role</span>
@@ -147,7 +159,6 @@ const Register = () => {
                         )}
                     </div>
 
-                    {/* Password Input */}
                     <div className="form-control">
                         <label className="label pt-0">
                             <span className="label-text font-semibold">Password</span>
@@ -174,15 +185,13 @@ const Register = () => {
                         )}
                     </div>
 
-                    {/* Submit Button */}
                     <div className="form-control mt-4">
-                        <button className="btn btn-primary text-white text-lg w-full">Register</button>
+                        <button className="btn btn-primary text-lg w-full text-black">Register</button>
                     </div>
                 </form>
 
                 <div className="divider text-sm text-base-content/60 my-4">OR</div>
 
-                {/* Google Button */}
                 <button 
                     onClick={handleGoogleSignIn}
                     className="btn bg-white text-black border-[#e5e5e5] w-full hover:bg-gray-100 hover:border-gray-300"
