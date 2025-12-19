@@ -1,29 +1,57 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react'; // removed { useEffect, useState } as we are using useQuery
 import useAuth from '../../../hooks/useAuth';
 import useAxios from '../../../hooks/useAxios';
 import Loading from '../../../components/common/Loading';
+import { useQuery } from '@tanstack/react-query';
+import Swal from 'sweetalert2'; // Make sure Swal is imported
 
 const MyOrders = () => {
     const { user } = useAuth();
     const axios = useAxios();
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (user?.email) {
-            axios.get(`/orders?email=${user.email}`)
-                .then(res => {
-                    setOrders(res.data);
-                    setLoading(false);
-                })
-                .catch(err => {
-                    console.error(err);
-                    setLoading(false);
-                });
+    const { data: orders = [], isLoading, refetch } = useQuery({
+        queryKey: ['orders', user?.email],
+        queryFn: async () => {
+            const res = await axios.get(`/orders?email=${user.email}`);
+            return res.data;
         }
-    }, [user, axios]);
+    });
 
-    if (loading) return <Loading />;
+    const handleCancel = (id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, cancel it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`/orders/${id}`)
+                    .then(res => {
+                        if (res.data.deletedCount > 0) {
+                            refetch(); // This updates the UI instantly
+                            Swal.fire({
+                                title: "Cancelled!",
+                                text: "Your order has been cancelled.",
+                                icon: "success"
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        Swal.fire({
+                            title: "Error!",
+                            text: "Could not cancel order.",
+                            icon: "error"
+                        });
+                    });
+            }
+        });
+    }
+
+    if (isLoading) return <Loading />;
 
     return (
         <div className="bg-base-100 p-8 rounded-xl shadow-lg border border-base-200">
@@ -71,9 +99,14 @@ const MyOrders = () => {
                                         </span>
                                     </td>
                                     <td>
-                                        <button className="btn btn-sm btn-ghost text-primary">View</button>
+                                        <button className="btn btn-sm btn-ghost text-primary mr-2">View</button>
                                         {order.status === 'Pending' && (
-                                            <button className="btn btn-sm btn-ghost text-error">Cancel</button>
+                                            <button 
+                                                onClick={() => handleCancel(order._id)}
+                                                className="btn btn-sm btn-ghost text-error"
+                                            >
+                                                Cancel
+                                            </button>
                                         )}
                                     </td>
                                 </tr>

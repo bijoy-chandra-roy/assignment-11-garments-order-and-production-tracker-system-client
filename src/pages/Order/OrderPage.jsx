@@ -61,7 +61,6 @@ const OrderPage = () => {
             .then(res => {
                 if (res.data.insertedId) {
                     Swal.fire({
-                        position: 'top-end',
                         icon: 'success',
                         title: 'Order placed successfully',
                         showConfirmButton: false,
