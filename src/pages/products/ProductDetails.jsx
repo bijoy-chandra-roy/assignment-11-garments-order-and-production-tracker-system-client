@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router';
-import Loading from '../common/Loading';
+import Loading from '../../components/common/Loading';
 import useAuth from '../../hooks/useAuth';
 import { FaStar, FaBoxOpen, FaTag, FaDollarSign } from 'react-icons/fa';
 
@@ -11,7 +11,6 @@ const ProductDetails = () => {
     const { user } = useAuth();
 
     useEffect(() => {
-        // Simulating fetching a single product by ID
         fetch('/products.json')
             .then(res => res.json())
             .then(data => {
@@ -28,10 +27,10 @@ const ProductDetails = () => {
     if (loading) return <Loading />;
     if (!product) return <div className="text-center py-20 text-2xl font-bold text-error">Product not found</div>;
 
-    const { name, image, category, price, quantity, description, rating } = product;
+    const { _id, name, image, category, price, quantity, description, rating } = product;
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-12 bg-base-100">
+        <div className="max-w-7xl min-h-screen mx-auto px-4 py-12 bg-base-100">
             <div className="flex flex-col lg:flex-row gap-12">
                 {/* Image Section */}
                 <div className="flex-1">
@@ -89,9 +88,9 @@ const ProductDetails = () => {
                         <div className="mt-8">
                             {/* Role check logic will be added here later. For now, showing to all logged-in users */}
                             {user ? (
-                                <button className="btn btn-primary btn-lg w-full text-black font-bold shadow-lg hover:shadow-xl transition-all">
+                                <Link to={`/order/${_id}`} className="btn btn-primary btn-lg w-full text-black font-bold shadow-lg hover:shadow-xl transition-all">
                                     Order Now
-                                </button>
+                                </Link>
                             ) : (
                                 <div className="text-center">
                                     <p className="mb-2 text-error">Please login to place an order</p>

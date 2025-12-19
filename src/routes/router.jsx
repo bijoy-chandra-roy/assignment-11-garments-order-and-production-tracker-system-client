@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 
 import MainLayout from "../layouts/MainLayout";
 import HomePage from "../pages/home/HomePage";
@@ -9,8 +9,10 @@ import Register from "../pages/auth/Register";
 import PrivateRoute from "./PrivateRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Profile from "../pages/dashboard/common/Profile";
-import AllProducts from "../components/products/AllProducts";
-import ProductDetails from "../components/products/ProductDetails";
+import AllProducts from "../pages/products/AllProducts";
+import ProductDetails from "../pages/products/ProductDetails";
+import OrderPage from "../pages/Order/OrderPage";
+import MyOrders from "../pages/dashboard/user/MyOrders";
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +34,10 @@ export const router = createBrowserRouter([
       {
         path: "products/:id",
         element: <PrivateRoute><ProductDetails></ProductDetails></PrivateRoute>
+      },
+      {
+        path: "order/:id",
+        element: <PrivateRoute><OrderPage></OrderPage></PrivateRoute>
       }
     ]
   },
@@ -52,7 +58,18 @@ export const router = createBrowserRouter([
     path: "dashboard",
     element: <PrivateRoute><DashboardLayout></DashboardLayout></PrivateRoute>,
     children: [
-      
+      {
+        index: true, 
+        element: <Navigate to="/dashboard/profile" replace />
+      },
+      {
+        path: "my-orders", 
+        element: <MyOrders></MyOrders>
+      },
+      {
+        path: "profile",
+        element: <Profile></Profile>
+      }
     ]
   }
 ]);
