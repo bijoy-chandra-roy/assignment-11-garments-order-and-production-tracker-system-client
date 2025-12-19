@@ -6,9 +6,9 @@ import Swal from 'sweetalert2';
 import SocialLogin from '../../components/auth/SocialLogin';
 
 const Login = () => {
-    const { 
-        register, 
-        handleSubmit, 
+    const {
+        register,
+        handleSubmit,
         formState: { errors, isSubmitted }
     } = useForm({
         mode: 'onChange'
@@ -28,10 +28,8 @@ const Login = () => {
     const onSubmit = (data) => {
         signIn(data.email, data.password)
             .then(result => {
-                const user = result.user;
-                console.log(user);
                 Swal.fire({
-                    title: 'User Login Successful.',
+                    title: `Welcome back ${result.user.displayName}`,
                     showClass: {
                         popup: 'animate__animated animate__fadeInDown'
                     },
@@ -42,7 +40,6 @@ const Login = () => {
                 navigate(from, { replace: true });
             })
             .catch(error => {
-                console.log(error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
@@ -56,19 +53,19 @@ const Login = () => {
             <div className="card-body">
                 <h2 className="text-3xl font-bold text-center mb-2">Login</h2>
                 <p className="text-center text-base-content/60 mb-6">Welcome back! Please login to your account.</p>
-                
+
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    
+
                     {/* Email Input */}
                     <div className="form-control">
                         <label className="label pt-0">
                             <span className="label-text font-semibold">Email Address</span>
                         </label>
-                        <input 
-                            type="email" 
-                            placeholder="Type your email" 
-                            className="input input-bordered w-full" 
-                            {...register("email", { required: true })} 
+                        <input
+                            type="email"
+                            placeholder="Type your email"
+                            className="input input-bordered w-full"
+                            {...register("email", { required: true })}
                         />
                         {errors.email && (isSubmitted || errors.email.type !== 'required') && (
                             <span className="text-red-500 text-xs mt-1">Email is required</span>
@@ -80,11 +77,11 @@ const Login = () => {
                         <label className="label pt-0">
                             <span className="label-text font-semibold">Password</span>
                         </label>
-                        <input 
-                            type="password" 
-                            placeholder="Enter your password" 
-                            className="input input-bordered w-full" 
-                            {...register("password", { required: true })} 
+                        <input
+                            type="password"
+                            placeholder="Enter your password"
+                            className="input input-bordered w-full"
+                            {...register("password", { required: true })}
                         />
                         {errors.password && (isSubmitted || errors.password.type !== 'required') && (
                             <span className="text-red-500 text-xs mt-1">Password is required</span>

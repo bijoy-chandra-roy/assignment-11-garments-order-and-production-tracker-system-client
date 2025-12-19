@@ -39,7 +39,9 @@ const AuthProvider = ({ children }) => {
         const unsubscribe = onAuthStateChanged(auth, currentUser => {
             setUser(currentUser);
             if (currentUser) {
-                console.log('current user', currentUser);
+                localStorage.setItem('hasUser', 'true');
+            } else {
+                localStorage.removeItem('hasUser');
             }
             setLoading(false);
         });

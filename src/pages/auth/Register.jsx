@@ -7,16 +7,16 @@ import axios from 'axios';
 import SocialLogin from '../../components/auth/SocialLogin';
 
 const Register = () => {
-    const { 
-        register, 
-        handleSubmit, 
-        reset, 
+    const {
+        register,
+        handleSubmit,
+        reset,
         formState: { errors, isSubmitted }
     } = useForm({
         mode: 'onChange'
     });
-    
-    const { createUser, updateUserProfile } = useAuth(); 
+
+    const { createUser, updateUserProfile } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -39,7 +39,6 @@ const Register = () => {
                             .then(() => {
                                 reset();
                                 Swal.fire({
-                                    position: 'top-end',
                                     icon: 'success',
                                     title: 'User created successfully.',
                                     showConfirmButton: false,
@@ -47,10 +46,15 @@ const Register = () => {
                                 });
                                 navigate(from, { replace: true });
                             })
-                            .catch(error => console.log(error))
+                            .catch(error => {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: error.message,
+                                });
+                            })
                     })
                     .catch(error => {
-                        console.log(error);
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops...',
@@ -73,18 +77,18 @@ const Register = () => {
             <div className="card-body">
                 <h2 className="text-3xl font-bold text-center mb-2">Sign Up</h2>
                 <p className="text-center text-base-content/60 mb-6">Create your account to get started</p>
-                
+
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    
+
                     <div className="form-control">
                         <label className="label pt-0">
                             <span className="label-text font-semibold">Full Name</span>
                         </label>
-                        <input 
-                            type="text" 
-                            placeholder="Type your name" 
-                            className="input input-bordered w-full" 
-                            {...register("name", { required: true })} 
+                        <input
+                            type="text"
+                            placeholder="Type your name"
+                            className="input input-bordered w-full"
+                            {...register("name", { required: true })}
                         />
                         {errors.name && (isSubmitted || errors.name.type !== 'required') && (
                             <span className="text-red-500 text-xs mt-1">Name is required</span>
@@ -95,11 +99,11 @@ const Register = () => {
                         <label className="label pt-0">
                             <span className="label-text font-semibold">Email Address</span>
                         </label>
-                        <input 
-                            type="email" 
-                            placeholder="Type your email" 
-                            className="input input-bordered w-full" 
-                            {...register("email", { required: true })} 
+                        <input
+                            type="email"
+                            placeholder="Type your email"
+                            className="input input-bordered w-full"
+                            {...register("email", { required: true })}
                         />
                         {errors.email && (isSubmitted || errors.email.type !== 'required') && (
                             <span className="text-red-500 text-xs mt-1">Email is required</span>
@@ -110,11 +114,11 @@ const Register = () => {
                         <label className="label pt-0">
                             <span className="label-text font-semibold">Profile Picture</span>
                         </label>
-                        <input 
-                            type="file" 
-                            className="file-input file-input-bordered w-full" 
+                        <input
+                            type="file"
+                            className="file-input file-input-bordered w-full"
                             accept='image/*'
-                            {...register("image", { required: true })} 
+                            {...register("image", { required: true })}
                         />
                         {errors.image && (isSubmitted || errors.image.type !== 'required') && (
                             <span className="text-red-500 text-xs mt-1">Image is required</span>
@@ -125,7 +129,7 @@ const Register = () => {
                         <label className="label pt-0">
                             <span className="label-text font-semibold">Role</span>
                         </label>
-                        <select 
+                        <select
                             className="select select-bordered w-full"
                             defaultValue="buyer"
                             {...register("role", { required: true })}
@@ -142,11 +146,11 @@ const Register = () => {
                         <label className="label pt-0">
                             <span className="label-text font-semibold">Password</span>
                         </label>
-                        <input 
-                            type="password" 
-                            placeholder="Enter your password" 
-                            className="input input-bordered w-full" 
-                            {...register("password", { 
+                        <input
+                            type="password"
+                            placeholder="Enter your password"
+                            className="input input-bordered w-full"
+                            {...register("password", {
                                 required: "Password is required",
                                 minLength: {
                                     value: 6,
@@ -156,11 +160,11 @@ const Register = () => {
                                     value: /(?=.*[a-z])(?=.*[A-Z])/,
                                     message: "Must have uppercase and lowercase"
                                 }
-                            })} 
+                            })}
                         />
                         {errors.password && (
-                            (errors.password.type === 'required' && !isSubmitted) ? null : 
-                            <span className="text-red-500 text-xs mt-1">{errors.password.message}</span>
+                            (errors.password.type === 'required' && !isSubmitted) ? null :
+                                <span className="text-red-500 text-xs mt-1">{errors.password.message}</span>
                         )}
                     </div>
 

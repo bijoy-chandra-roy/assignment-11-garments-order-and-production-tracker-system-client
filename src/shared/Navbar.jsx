@@ -5,12 +5,13 @@ import ThemeToggle from '../components/common/ThemeToggle';
 import useAuth from '../hooks/useAuth';
 
 const Navbar = () => {
-    const { user, logOut } = useAuth();
+    const { user, logOut, loading } = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
         try {
             await logOut();
+            localStorage.removeItem('hasUser');
             navigate('/login');
         } catch (error) {
             console.error("Logout failed:", error);
@@ -28,7 +29,7 @@ const Navbar = () => {
         <li><NavLink to="/about" className={navLinkStyles}>About Us</NavLink></li>
         <li><NavLink to="/contact" className={navLinkStyles}>Contact</NavLink></li>
         {
-            user && <li><NavLink to="/dashboard" className={navLinkStyles}>Dashboard</NavLink></li>
+            (user || localStorage.getItem('hasUser') === 'true') && <li><NavLink to="/dashboard" className={navLinkStyles}>Dashboard</NavLink></li>
         }
     </>
 
@@ -55,7 +56,9 @@ const Navbar = () => {
             <div className="navbar-end gap-2">
                 <ThemeToggle />
                 {
-                    user ? <>
+                    loading ? (
+                        <span className="loading loading-spinner loading-md text-primary"></span>
+                    ) : user ? <>
                         <div className="dropdown dropdown-end">
                             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar ring ring-primary ring-offset-base-100 ring-offset-2">
                                 <div className="w-10 rounded-full">

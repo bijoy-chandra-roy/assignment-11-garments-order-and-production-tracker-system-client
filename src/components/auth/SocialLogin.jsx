@@ -13,7 +13,6 @@ const SocialLogin = () => {
     const handleGoogleSignIn = () => {
         googleSignIn()
             .then(result => {
-                console.log(result.user);
                 Swal.fire({
                     title: 'User Login Successful.',
                     showClass: {
