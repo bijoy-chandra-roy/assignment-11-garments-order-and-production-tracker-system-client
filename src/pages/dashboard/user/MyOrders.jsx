@@ -4,6 +4,7 @@ import useAxios from '../../../hooks/useAxios';
 import Loading from '../../../components/common/Loading';
 import { useQuery } from '@tanstack/react-query';
 import Swal from 'sweetalert2'; // Make sure Swal is imported
+import { Link } from 'react-router';
 
 const MyOrders = () => {
     const { user } = useAuth();
@@ -56,7 +57,7 @@ const MyOrders = () => {
     return (
         <div className="bg-base-100 p-8 rounded-xl shadow-lg border border-base-200">
             <h2 className="text-3xl font-bold mb-6">My Orders</h2>
-            
+
             <div className="overflow-x-auto">
                 <table className="table">
                     {/* head */}
@@ -91,17 +92,25 @@ const MyOrders = () => {
                                     <td>{order.quantity}</td>
                                     <td>${order.totalPrice}</td>
                                     <td>
-                                        <span className={`badge ${
-                                            order.status === 'Pending' ? 'badge-warning' : 
+                                        <span className={`badge ${order.status === 'Pending' ? 'badge-warning' :
                                             order.status === 'Approved' ? 'badge-success' : 'badge-error'
-                                        } badge-outline font-bold`}>
+                                            } badge-outline font-bold`}>
                                             {order.status}
                                         </span>
                                     </td>
                                     <td>
-                                        <button className="btn btn-sm btn-ghost text-primary mr-2">View</button>
+                                        {order.status === 'Pending' && !order.paymentStatus && (
+                                            <Link to={`/dashboard/payment/${order._id}`}>
+                                                <button className="btn btn-sm btn-primary mr-2 text-black">Pay</button>
+                                            </Link>
+                                        )}
+
+                                        {order.paymentStatus === 'Paid' && (
+                                            <span className="badge badge-success badge-outline mr-2">Paid</span>
+                                        )}
+
                                         {order.status === 'Pending' && (
-                                            <button 
+                                            <button
                                                 onClick={() => handleCancel(order._id)}
                                                 className="btn btn-sm btn-ghost text-error"
                                             >
