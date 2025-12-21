@@ -31,6 +31,7 @@ import PendingOrders from "../pages/dashboard/manager/PendingOrders";
 import ApprovedOrders from "../pages/dashboard/manager/ApprovedOrders";
 import AdminAllProducts from "../pages/dashboard/admin/AdminAllProducts";
 import AdminAllOrders from "../pages/dashboard/admin/AdminAllOrders";
+import UpdateProduct from "../pages/dashboard/manager/UpdateProduct";
 
 export const router = createBrowserRouter([
   {
@@ -138,7 +139,11 @@ export const router = createBrowserRouter([
       {
         path: "approved-orders",
         element: <ApprovedOrders></ApprovedOrders>
-      }
+      },
+      {
+        path: "update-product/:id",
+        element: <UpdateProduct></UpdateProduct>
+      },
     ]
   }
 ]);

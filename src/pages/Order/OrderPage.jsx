@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams, useNavigate } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
 import useAuth from '../../hooks/useAuth';
 import Loading from '../../components/common/Loading';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
+import useAxios from '../../hooks/useAxios';
 
 const OrderPage = () => {
     const { id } = useParams();
     const { user } = useAuth();
-    const [product, setProduct] = useState(null);
-    const [loading, setLoading] = useState(true);
     const axiosSecure = useAxiosSecure();
+    const axiosPublic = useAxios();
     const navigate = useNavigate();
 
     const { 
@@ -24,37 +25,38 @@ const OrderPage = () => {
         mode: 'onChange'
     });
 
-    useEffect(() => {
-        fetch('/products.json')
-            .then(res => res.json())
-            .then(data => {
-                const foundProduct = data.find(p => p._id === id);
-                setProduct(foundProduct);
-                setLoading(false);
-                
-                if (foundProduct) {
-                    setValue('price', foundProduct.price);
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                setLoading(false);
-            });
-    }, [id, setValue]);
+    // Fetch product details from Server
+    const { data: product, isLoading } = useQuery({
+        queryKey: ['order-product', id],
+        queryFn: async () => {
+            const res = await axiosPublic.get(`/products/${id}`);
+            return res.data;
+        }
+    });
+
+    // Set price in form once product is loaded
+    React.useEffect(() => {
+        if (product) {
+            setValue('price', product.price);
+        }
+    }, [product, setValue]);
 
     const orderQuantity = watch('quantity');
     const price = product?.price || 0;
-    const totalPrice = orderQuantity ? orderQuantity * price : 0;
+    const totalPrice = orderQuantity ? (orderQuantity * price).toFixed(2) : 0;
 
     const onSubmit = (data) => {
         const orderData = {
             ...data,
-            totalPrice,
+            totalPrice: parseFloat(totalPrice),
+            quantity: parseInt(data.quantity),
             orderDate: new Date(),
             status: 'Pending',
             productId: product._id,
             productImage: product.image,
-            productName: product.name
+            productName: product.name,
+            email: user?.email,
+            userName: user?.displayName
         };
 
         axiosSecure.post('/orders', orderData)
@@ -66,8 +68,7 @@ const OrderPage = () => {
                         showConfirmButton: false,
                         timer: 1500
                     });
-                    // Navigate to My Orders page (we will create this later)
-                    navigate('/'); 
+                    navigate('/dashboard/my-orders'); 
                 }
             })
             .catch(error => {
@@ -80,7 +81,7 @@ const OrderPage = () => {
             });
     };
 
-    if (loading) return <Loading />;
+    if (isLoading) return <Loading />;
     if (!product) return <div className="text-center py-20 text-error">Product not found</div>;
 
     return (
@@ -164,7 +165,8 @@ const OrderPage = () => {
                                         {...register("quantity", { 
                                             required: "Quantity is required",
                                             min: { value: 1, message: "Minimum order is 1" },
-                                            max: { value: product.quantity, message: `Max available is ${product.quantity}` }
+                                            max: { value: product.quantity, message: `Max available is ${product.quantity}` },
+                                            valueAsNumber: true
                                         })} 
                                     />
                                     {errors.quantity && <span className="text-error text-sm mt-1">{errors.quantity.message}</span>}

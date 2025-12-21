@@ -1,25 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import ProductCard from '../../components/products/ProductCard';
 import Loading from '../../components/common/Loading';
+import useAxios from '../../hooks/useAxios';
 
 const AllProducts = () => {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const axiosPublic = useAxios();
 
-    useEffect(() => {
-        fetch('/products.json')
-            .then(res => res.json())
-            .then(data => {
-                setProducts(data);
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error(err);
-                setLoading(false);
-            });
-    }, []);
+    const { data: products = [], isLoading } = useQuery({
+        queryKey: ['products'],
+        queryFn: async () => {
+            const res = await axiosPublic.get('/products');
+            return res.data;
+        }
+    });
 
-    if (loading) return <Loading />;
+    if (isLoading) return <Loading />;
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-12">

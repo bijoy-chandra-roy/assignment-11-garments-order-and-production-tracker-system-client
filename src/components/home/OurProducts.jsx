@@ -1,25 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import ProductCard from '../products/ProductCard';
 import Loading from '../common/Loading';
+import useAxios from '../../hooks/useAxios';
 
 const OurProducts = () => {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const axiosPublic = useAxios();
 
-    useEffect(() => {
-        fetch('/products.json')
-            .then(res => res.json())
-            .then(data => {
-                setProducts(data.slice(0, 6));
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error(err);
-                setLoading(false);
-            });
-    }, []);
+    const { data: products = [], isLoading } = useQuery({
+        queryKey: ['our-products'],
+        queryFn: async () => {
+            const res = await axiosPublic.get('/products');
+            return res.data;
+        }
+    });
 
-    if (loading) return <Loading />;
+    if (isLoading) return <Loading />;
+
+    // Display only the first 6 products as per requirement
+    const displayProducts = products.slice(0, 6);
 
     return (
         <div className="py-16 bg-base-100">
@@ -32,7 +31,7 @@ const OurProducts = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {products.map(product => (
+                    {displayProducts.map(product => (
                         <ProductCard key={product._id} product={product} />
                     ))}
                 </div>

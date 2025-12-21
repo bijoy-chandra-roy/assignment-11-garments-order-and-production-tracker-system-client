@@ -27,49 +27,63 @@ const AddProduct = () => {
 
     const onSubmit = async (data) => {
         setLoading(true);
-        // Image Upload to ImageBB
-        const imageFile = { image: data.image[0] }
-        const res = await axios.post(image_hosting_api, imageFile, {
-            headers: {
-                'content-type': 'multipart/form-data'
-            }
-        });
+        try {
+            // 1. Upload Image to ImageBB
+            const imageFile = { image: data.image[0] }
+            const formData = new FormData();
+            formData.append('image', imageFile.image);
 
-        if (res.data.success) {
-            const productItem = {
-                name: data.name,
-                description: data.description,
-                category: data.category,
-                price: parseFloat(data.price),
-                quantity: parseInt(data.quantity),
-                minimumOrder: parseInt(data.minimumOrder),
-                image: res.data.data.display_url,
-                video: data.video || '',
-                paymentMethod: data.paymentMethod,
-                showOnHome: data.showOnHome === true,
-                managerEmail: user.email,
-                managerName: user.displayName,
-                rating: 0, 
-                addedAt: new Date(),
-                status: 'approved' // Managers auto-approve their own products usually, or set to pending if Admin needs to approve
-            }
+            const res = await axios.post(image_hosting_api, formData, {
+                headers: {
+                    'content-type': 'multipart/form-data'
+                }
+            });
 
-            const productRes = await axiosSecure.post('/products', productItem);
-            
-            if(productRes.data.insertedId){
-                reset();
-                setImagePreview(null);
-                setLoading(false);
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: `${data.name} is added to the collection.`,
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+            if (res.data.success) {
+                // 2. Prepare product data to save in MongoDB
+                const productItem = {
+                    name: data.name,
+                    description: data.description,
+                    category: data.category,
+                    price: parseFloat(data.price),
+                    quantity: parseInt(data.quantity),
+                    minimumOrder: parseInt(data.minimumOrder),
+                    image: res.data.data.display_url,
+                    video: data.video || '',
+                    paymentMethod: data.paymentMethod,
+                    showOnHome: data.showOnHome === true, // Checkbox returns true/false
+                    managerEmail: user.email,
+                    managerName: user.displayName,
+                    rating: 0, 
+                    addedAt: new Date(),
+                    status: 'approved' 
+                }
+
+                // 3. Send data to server
+                const productRes = await axiosSecure.post('/products', productItem);
+                
+                if(productRes.data.insertedId){
+                    reset();
+                    setImagePreview(null);
+                    setLoading(false);
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: `${data.name} is added to the collection.`,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
             }
+        } catch (error) {
+            console.error(error);
+            setLoading(false);
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Something went wrong! Please try again.",
+            });
         }
-        setLoading(false);
     };
 
     return (

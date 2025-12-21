@@ -1,37 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams, Link } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
 import Loading from '../../components/common/Loading';
 import useAuth from '../../hooks/useAuth';
 import useRole from '../../hooks/useRole';
+import useAxios from '../../hooks/useAxios';
 import { FaStar, FaBoxOpen, FaTag, FaDollarSign } from 'react-icons/fa';
 
 const ProductDetails = () => {
     const { id } = useParams();
-    const [product, setProduct] = useState(null);
-    const [loading, setLoading] = useState(true);
     const { user } = useAuth();
     const [role] = useRole();
+    const axiosPublic = useAxios();
 
-    useEffect(() => {
-        fetch('/products.json')
-            .then(res => res.json())
-            .then(data => {
-                const foundProduct = data.find(p => p._id === id);
-                setProduct(foundProduct);
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error(err);
-                setLoading(false);
-            });
-    }, [id]);
+    const { data: product = null, isLoading } = useQuery({
+        queryKey: ['product', id],
+        queryFn: async () => {
+            const res = await axiosPublic.get(`/products/${id}`);
+            return res.data;
+        }
+    });
 
-    if (loading) return <Loading />;
+    if (isLoading) return <Loading />;
     if (!product) return <div className="text-center py-20 text-2xl font-bold text-error">Product not found</div>;
 
     const { _id, name, image, category, price, quantity, description, rating } = product;
 
-    const canOrder = user && role !== 'admin' && role !== 'manager';
+    // Logic: Only show Order button if user is NOT admin/manager.
+    // If not logged in, we still show the button but it redirects to login (handled in JSX).
+    const canOrder = !user || (role !== 'admin' && role !== 'manager');
 
     return (
         <div className="max-w-7xl min-h-screen mx-auto px-4 py-12 bg-base-100">
@@ -51,10 +48,10 @@ const ProductDetails = () => {
                         <div className="flex items-center gap-2 mb-4">
                             <div className="flex text-yellow-400">
                                 {[...Array(5)].map((_, i) => (
-                                    <FaStar key={i} className={i < Math.floor(rating) ? "text-yellow-400" : "text-gray-300"} />
+                                    <FaStar key={i} className={i < Math.floor(rating || 0) ? "text-yellow-400" : "text-gray-300"} />
                                 ))}
                             </div>
-                            <span className="text-sm text-base-content/60">({rating} Rating)</span>
+                            <span className="text-sm text-base-content/60">({rating || 0} Rating)</span>
                         </div>
                     </div>
 
@@ -85,15 +82,14 @@ const ProductDetails = () => {
                     <div className="space-y-4">
                         <div className="flex items-center gap-3 text-base-content/70">
                             <FaTag className="text-primary" />
-                            <span>Minimum Order Quantity: <strong>50 Units</strong></span>
+                            <span>Minimum Order Quantity: <strong>{product.minimumOrder || 50} Units</strong></span>
                         </div>
                         
-                        {/* Action Buttons */}
                         <div className="mt-8">
                             {!user ? (
                                 <div className="text-center">
                                     <p className="mb-2 text-error">Please login to place an order</p>
-                                    <Link to="/login" className="btn btn-secondary w-full">Login to Order</Link>
+                                    <Link to="/login" state={{ from: location }} className="btn btn-secondary w-full">Login to Order</Link>
                                 </div>
                             ) : canOrder ? (
                                 <Link to={`/order/${_id}`} className="btn btn-primary btn-lg w-full text-black font-bold shadow-lg hover:shadow-xl transition-all">
