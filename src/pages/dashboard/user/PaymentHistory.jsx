@@ -25,10 +25,12 @@ const PaymentHistory = () => {
 
             <div className="overflow-x-auto">
                 <table className="table table-zebra">
-                    {/* head */}
                     <thead className="bg-base-200">
                         <tr>
                             <th>#</th>
+                            <th>Image</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
                             <th>Amount</th>
                             <th>Transaction ID</th>
                             <th>Date</th>
@@ -38,7 +40,7 @@ const PaymentHistory = () => {
                     <tbody>
                         {payments.length === 0 ? (
                             <tr>
-                                <td colSpan="5" className="text-center py-8 text-gray-500">
+                                <td colSpan="8" className="text-center py-8 text-gray-500">
                                     No payment history found.
                                 </td>
                             </tr>
@@ -46,6 +48,15 @@ const PaymentHistory = () => {
                             payments.map((payment, index) => (
                                 <tr key={payment._id}>
                                     <th>{index + 1}</th>
+                                    <td>
+                                        <div className="avatar">
+                                            <div className="mask mask-squircle w-12 h-12">
+                                                <img src={payment.productImage} alt="Product" />
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="font-bold">{payment.productName}</td>
+                                    <td>{payment.quantity}</td>
                                     <td>${payment.amount}</td>
                                     <td className="font-mono text-xs">{payment.transactionId}</td>
                                     <td>{new Date(payment.date).toLocaleDateString()}</td>
