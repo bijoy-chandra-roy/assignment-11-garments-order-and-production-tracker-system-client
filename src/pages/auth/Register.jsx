@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate, useLocation } from 'react-router';
 import Swal from 'sweetalert2';
 import useAuth from '../../hooks/useAuth';
+import useAxios from '../../hooks/useAxios';
 import axios from 'axios';
 import SocialLogin from '../../components/auth/SocialLogin';
 
@@ -19,6 +20,7 @@ const Register = () => {
     const { createUser, updateUserProfile } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    const axiosPublic = useAxios();
 
     const from = location.state?.from?.pathname || "/";
 
@@ -37,14 +39,26 @@ const Register = () => {
                     .then(result => {
                         updateUserProfile(data.name, imageUrl)
                             .then(() => {
-                                reset();
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'User created successfully.',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                });
-                                navigate(from, { replace: true });
+                                const userInfo = {
+                                    name: data.name,
+                                    email: data.email,
+                                    role: data.role,
+                                    image: imageUrl,
+                                    status: 'pending'
+                                }
+                                axiosPublic.post('/users', userInfo)
+                                    .then(res => {
+                                        if (res.data.insertedId) {
+                                            reset();
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'User created successfully.',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            });
+                                            navigate(from, { replace: true });
+                                        }
+                                    })
                             })
                             .catch(error => {
                                 Swal.fire({

@@ -1,10 +1,12 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import useAuth from '../../hooks/useAuth';
+import useAxios from '../../hooks/useAxios';
 import Swal from 'sweetalert2';
 
 const SocialLogin = () => {
     const { googleSignIn } = useAuth();
+    const axiosPublic = useAxios();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -13,16 +15,26 @@ const SocialLogin = () => {
     const handleGoogleSignIn = () => {
         googleSignIn()
             .then(result => {
-                Swal.fire({
-                    title: 'User Login Successful.',
-                    showClass: {
-                        popup: 'animate__animated animate__fadeInDown'
-                    },
-                    hideClass: {
-                        popup: 'animate__animated animate__fadeOutUp'
-                    }
-                });
-                navigate(from, { replace: true });
+                const userInfo = {
+                    email: result.user?.email,
+                    name: result.user?.displayName,
+                    image: result.user?.photoURL,
+                    role: 'buyer',
+                    status: 'pending'
+                }
+                axiosPublic.post('/users', userInfo)
+                    .then(res => {
+                        Swal.fire({
+                            title: 'User Login Successful.',
+                            showClass: {
+                                popup: 'animate__animated animate__fadeInDown'
+                            },
+                            hideClass: {
+                                popup: 'animate__animated animate__fadeOutUp'
+                            }
+                        });
+                        navigate(from, { replace: true });
+                    })
             })
             .catch(error => {
                 console.error(error);
