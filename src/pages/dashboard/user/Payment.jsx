@@ -30,7 +30,7 @@ const Payment = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[60vh]">
-            <div className="card w-96 bg-base-100 shadow-xl border border-base-200">
+            <div className="card w-96 bg-base-200 shadow-xl border border-base-200">
                 <div className="card-body text-center">
                     <h2 className="card-title justify-center">Complete Payment</h2>
                     <p>Pay for: <strong>{order.productName}</strong></p>
