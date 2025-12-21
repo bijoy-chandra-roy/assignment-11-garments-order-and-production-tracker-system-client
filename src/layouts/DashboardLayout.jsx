@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router';
-import { FaHome, FaShoppingBag, FaUser, FaBars } from 'react-icons/fa';
+import { FaHome, FaShoppingBag, FaUser, FaBars, FaHistory } from 'react-icons/fa';
 import Navbar from '../shared/Navbar';
 import Footer from '../shared/footer';
 import useAuth from '../hooks/useAuth';
@@ -16,7 +16,7 @@ const DashboardLayout = () => {
             {/* 2. Dashboard Content with Collapsible Sidebar */}
             <div className="drawer lg:drawer-open flex-1">
                 <input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
-                
+
                 {/* Main Content Area */}
                 <div className="drawer-content flex flex-col p-6 bg-base-100">
                     {/* Sidebar Toggle Button */}
@@ -37,17 +37,17 @@ const DashboardLayout = () => {
                 {/* Sidebar Area */}
                 <div className="drawer-side z-40 is-drawer-close:overflow-visible">
                     <label htmlFor="dashboard-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
-                    
+
                     {/* Sidebar Container: Handles the width transition */}
                     <div className="flex min-h-full flex-col items-start bg-base-200 text-base-content border-r border-base-300 transition-all duration-300 is-drawer-close:w-[80px] is-drawer-open:w-72">
-                        
+
                         {/* Sidebar Menu */}
                         <ul className="menu w-full grow gap-2 p-4">
                             {/* Profile Link */}
                             <li>
-                                <NavLink 
+                                <NavLink
                                     to="/dashboard/profile"
-                                    className={({ isActive }) => 
+                                    className={({ isActive }) =>
                                         `flex items-center gap-4 p-3 rounded-lg transition-colors ${isActive ? 'bg-primary text-black font-bold' : 'hover:bg-base-300'}`
                                     }
                                 >
@@ -60,9 +60,9 @@ const DashboardLayout = () => {
 
                             {/* My Orders Link */}
                             <li>
-                                <NavLink 
+                                <NavLink
                                     to="/dashboard/my-orders"
-                                    className={({ isActive }) => 
+                                    className={({ isActive }) =>
                                         `flex items-center gap-4 p-3 rounded-lg transition-colors ${isActive ? 'bg-primary text-black font-bold' : 'hover:bg-base-300'}`
                                     }
                                 >
@@ -72,12 +72,25 @@ const DashboardLayout = () => {
                                     <span className="is-drawer-close:hidden whitespace-nowrap">My Orders</span>
                                 </NavLink>
                             </li>
+                            <li>
+                                <NavLink
+                                    to="/dashboard/payment-history"
+                                    className={({ isActive }) =>
+                                        `flex items-center gap-4 p-3 rounded-lg transition-colors ${isActive ? 'bg-primary text-black font-bold' : 'hover:bg-base-300'}`
+                                    }
+                                >
+                                    <span className="is-drawer-close:tooltip is-drawer-close:tooltip-right z-50" data-tip="Payment History">
+                                        <FaHistory className="text-xl" />
+                                    </span>
+                                    <span className="is-drawer-close:hidden whitespace-nowrap">Payment History</span>
+                                </NavLink>
+                            </li>
 
                             <div className="divider my-2"></div>
 
                             {/* Back to Home Link */}
                             <li>
-                                <NavLink 
+                                <NavLink
                                     to="/"
                                     className="flex items-center gap-4 p-3 rounded-lg hover:bg-base-300 transition-colors"
                                 >
