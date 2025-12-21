@@ -1,23 +1,23 @@
 import React from 'react';
 import { useParams } from 'react-router';
-import useAxios from '../../../hooks/useAxios';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../../../components/common/Loading';
 
 const Payment = () => {
     const { id } = useParams();
-    const axios = useAxios();
+    const axiosSecure = useAxiosSecure();
 
     const { data: order = {}, isLoading } = useQuery({
         queryKey: ['order', id],
         queryFn: async () => {
-            const res = await axios.get(`/orders/${id}`);
+            const res = await axiosSecure.get(`/orders/${id}`);
             return res.data;
         }
     });
 
     const handlePayment = () => {
-        axios.post('/create-checkout-session', { order })
+        axiosSecure.post('/create-checkout-session', { order })
             .then(res => {
                 if (res.data.url) {
                     window.location.href = res.data.url; // Redirect to Stripe

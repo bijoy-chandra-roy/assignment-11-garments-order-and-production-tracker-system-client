@@ -1,6 +1,6 @@
 import React from 'react'; // removed { useEffect, useState } as we are using useQuery
 import useAuth from '../../../hooks/useAuth';
-import useAxios from '../../../hooks/useAxios';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
 import { useQuery } from '@tanstack/react-query';
 import Swal from 'sweetalert2'; // Make sure Swal is imported
@@ -8,12 +8,12 @@ import { Link } from 'react-router';
 
 const MyOrders = () => {
     const { user } = useAuth();
-    const axios = useAxios();
+    const axiosSecure = useAxiosSecure();
 
     const { data: orders = [], isLoading, refetch } = useQuery({
         queryKey: ['orders', user?.email],
         queryFn: async () => {
-            const res = await axios.get(`/orders?email=${user.email}`);
+            const res = await axiosSecure.get(`/orders?email=${user.email}`);
             return res.data;
         }
     });
@@ -29,7 +29,7 @@ const MyOrders = () => {
             confirmButtonText: "Yes, cancel it!"
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.delete(`/orders/${id}`)
+                axiosSecure.delete(`/orders/${id}`)
                     .then(res => {
                         if (res.data.deletedCount > 0) {
                             refetch(); // This updates the UI instantly

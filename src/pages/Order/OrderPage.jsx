@@ -4,14 +4,14 @@ import { useParams, useNavigate } from 'react-router';
 import useAuth from '../../hooks/useAuth';
 import Loading from '../../components/common/Loading';
 import Swal from 'sweetalert2';
-import useAxios from '../../hooks/useAxios';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
 
 const OrderPage = () => {
     const { id } = useParams();
     const { user } = useAuth();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
-    const axios = useAxios();
+    const axiosSecure = useAxiosSecure();
     const navigate = useNavigate();
 
     const { 
@@ -57,7 +57,7 @@ const OrderPage = () => {
             productName: product.name
         };
 
-        axios.post('/orders', orderData)
+        axiosSecure.post('/orders', orderData)
             .then(res => {
                 if (res.data.insertedId) {
                     Swal.fire({

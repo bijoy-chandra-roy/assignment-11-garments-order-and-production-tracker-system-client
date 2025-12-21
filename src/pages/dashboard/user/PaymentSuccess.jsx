@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router';
-import useAxios from '../../../hooks/useAxios';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
 import Swal from 'sweetalert2';
 
@@ -8,13 +8,13 @@ const PaymentSuccess = () => {
     const [searchParams] = useSearchParams();
     const sessionId = searchParams.get('session_id');
     const orderId = searchParams.get('orderId');
-    const axios = useAxios();
+    const axiosSecure = useAxiosSecure();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (sessionId && orderId) {
-            axios.post('/payments/success', { sessionId, orderId })
+            axiosSecure.post('/payments/success', { sessionId, orderId })
                 .then(res => {
                     if (res.data.paymentResult.insertedId) {
                         setLoading(false);
@@ -34,7 +34,7 @@ const PaymentSuccess = () => {
                     setLoading(false);
                 });
         }
-    }, [sessionId, orderId, axios, navigate]);
+    }, [sessionId, orderId, axiosSecure, navigate]);
 
     if (loading) return <Loading />;
 
