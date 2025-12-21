@@ -2,9 +2,9 @@ import React from 'react';
 import { NavLink, Outlet } from 'react-router';
 import { FaHome, FaShoppingBag, FaUser, FaBars, FaHistory, FaUsers, FaClipboardList, FaBoxOpen, FaPlusCircle, FaTasks, FaCheckCircle } from 'react-icons/fa';
 import Navbar from '../shared/Navbar';
-import Footer from '../shared/Footer';
 import useAuth from '../hooks/useAuth';
 import useRole from '../hooks/useRole';
+import Footer from '../shared/footer';
 
 const DashboardLayout = () => {
     const { user } = useAuth();
