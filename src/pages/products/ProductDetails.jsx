@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router';
 import Loading from '../../components/common/Loading';
 import useAuth from '../../hooks/useAuth';
+import useRole from '../../hooks/useRole';
 import { FaStar, FaBoxOpen, FaTag, FaDollarSign } from 'react-icons/fa';
 
 const ProductDetails = () => {
@@ -9,6 +10,7 @@ const ProductDetails = () => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const { user } = useAuth();
+    const [role] = useRole();
 
     useEffect(() => {
         fetch('/products.json')
@@ -28,6 +30,8 @@ const ProductDetails = () => {
     if (!product) return <div className="text-center py-20 text-2xl font-bold text-error">Product not found</div>;
 
     const { _id, name, image, category, price, quantity, description, rating } = product;
+
+    const canOrder = user && role !== 'admin' && role !== 'manager';
 
     return (
         <div className="max-w-7xl min-h-screen mx-auto px-4 py-12 bg-base-100">
@@ -86,16 +90,19 @@ const ProductDetails = () => {
                         
                         {/* Action Buttons */}
                         <div className="mt-8">
-                            {/* Role check logic will be added here later. For now, showing to all logged-in users */}
-                            {user ? (
-                                <Link to={`/order/${_id}`} className="btn btn-primary btn-lg w-full text-black font-bold shadow-lg hover:shadow-xl transition-all">
-                                    Order Now
-                                </Link>
-                            ) : (
+                            {!user ? (
                                 <div className="text-center">
                                     <p className="mb-2 text-error">Please login to place an order</p>
                                     <Link to="/login" className="btn btn-secondary w-full">Login to Order</Link>
                                 </div>
+                            ) : canOrder ? (
+                                <Link to={`/order/${_id}`} className="btn btn-primary btn-lg w-full text-black font-bold shadow-lg hover:shadow-xl transition-all">
+                                    Order Now
+                                </Link>
+                            ) : (
+                                <button disabled className="btn btn-disabled w-full">
+                                    Ordering Restricted (Role: {role})
+                                </button>
                             )}
                         </div>
                     </div>

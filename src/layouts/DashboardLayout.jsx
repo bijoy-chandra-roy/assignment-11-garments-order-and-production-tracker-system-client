@@ -37,6 +37,7 @@ const DashboardLayout = () => {
                     <div className="flex min-h-full flex-col items-start bg-base-200 text-base-content border-r border-base-300 transition-all duration-300 is-drawer-close:w-[80px] is-drawer-open:w-72">
 
                         <ul className="menu w-full grow gap-2 p-4">
+                            {/* ADMIN DASHBOARD: Manage Users, All Products, All Orders */}
                             {role === 'admin' && (
                                 <>
                                     <li>
@@ -78,35 +79,10 @@ const DashboardLayout = () => {
                                             <span className="is-drawer-close:hidden whitespace-nowrap">All Orders</span>
                                         </NavLink>
                                     </li>
-                                    <li>
-                                        <NavLink
-                                            to="/dashboard/my-orders"
-                                            className={({ isActive }) =>
-                                                `flex items-center gap-4 p-3 rounded-lg transition-colors ${isActive ? 'bg-primary text-black font-bold' : 'hover:bg-base-300'}`
-                                            }
-                                        >
-                                            <span className="is-drawer-close:tooltip is-drawer-close:tooltip-right z-50" data-tip="My Orders">
-                                                <FaShoppingBag className="text-xl" />
-                                            </span>
-                                            <span className="is-drawer-close:hidden whitespace-nowrap">My Orders</span>
-                                        </NavLink>
-                                    </li>
-                                    <li>
-                                        <NavLink
-                                            to="/dashboard/payment-history"
-                                            className={({ isActive }) =>
-                                                `flex items-center gap-4 p-3 rounded-lg transition-colors ${isActive ? 'bg-primary text-black font-bold' : 'hover:bg-base-300'}`
-                                            }
-                                        >
-                                            <span className="is-drawer-close:tooltip is-drawer-close:tooltip-right z-50" data-tip="Payment History">
-                                                <FaHistory className="text-xl" />
-                                            </span>
-                                            <span className="is-drawer-close:hidden whitespace-nowrap">Payment History</span>
-                                        </NavLink>
-                                    </li>
                                 </>
                             )}
 
+                            {/* MANAGER DASHBOARD: Add Product, Manage Products, Pending Orders, Approved Orders */}
                             {role === 'manager' && (
                                 <>
                                     <li>
@@ -164,6 +140,7 @@ const DashboardLayout = () => {
                                 </>
                             )}
 
+                            {/* BUYER DASHBOARD: My Orders, Payment History */}
                             {role === 'buyer' && (
                                 <>
                                     <li>
@@ -197,6 +174,7 @@ const DashboardLayout = () => {
 
                             <div className="divider my-2"></div>
 
+                            {/* Common Links: Profile and Home */}
                             <li>
                                 <NavLink
                                     to="/dashboard/profile"

@@ -12,12 +12,25 @@ import Profile from "../pages/dashboard/common/Profile";
 import AllProducts from "../pages/products/AllProducts";
 import ProductDetails from "../pages/products/ProductDetails";
 import OrderPage from "../pages/Order/OrderPage";
+
+// Buyer Pages
 import MyOrders from "../pages/dashboard/user/MyOrders";
 import Payment from "../pages/dashboard/user/Payment";
 import PaymentSuccess from "../pages/dashboard/user/PaymentSuccess";
 import PaymentCancelled from "../pages/dashboard/user/PaymentCancelled";
 import PaymentHistory from "../pages/dashboard/user/PaymentHistory";
+import TrackOrder from "../pages/dashboard/user/TrackOrder";
+
+// Admin Pages
 import ManageUsers from "../pages/dashboard/admin/ManageUsers";
+
+// Manager Pages
+import AddProduct from "../pages/dashboard/manager/AddProduct";
+import ManageProducts from "../pages/dashboard/manager/ManageProducts";
+import PendingOrders from "../pages/dashboard/manager/PendingOrders";
+import ApprovedOrders from "../pages/dashboard/manager/ApprovedOrders";
+import AdminAllProducts from "../pages/dashboard/admin/AdminAllProducts";
+import AdminAllOrders from "../pages/dashboard/admin/AdminAllOrders";
 
 export const router = createBrowserRouter([
   {
@@ -68,12 +81,13 @@ export const router = createBrowserRouter([
         element: <Navigate to="/dashboard/profile" replace />
       },
       {
-        path: "my-orders",
-        element: <MyOrders></MyOrders>
-      },
-      {
         path: "profile",
         element: <Profile></Profile>
+      },
+      // Buyer Routes
+      {
+        path: "my-orders",
+        element: <MyOrders></MyOrders>
       },
       {
         path: "payment/:id",
@@ -92,9 +106,39 @@ export const router = createBrowserRouter([
         element: <PaymentHistory></PaymentHistory>
       },
       {
+        path: "track-order/:orderId",
+        element: <TrackOrder></TrackOrder>
+      },
+      // Admin Routes
+      {
         path: "manage-users",
         element: <ManageUsers></ManageUsers>
       },
+      {
+        path: "all-products",
+        element: <AdminAllProducts></AdminAllProducts>
+      },
+      {
+        path: "all-orders",
+        element: <AdminAllOrders></AdminAllOrders>
+      },
+      // Manager Routes
+      {
+        path: "add-product",
+        element: <AddProduct></AddProduct>
+      },
+      {
+        path: "manage-products",
+        element: <ManageProducts></ManageProducts>
+      },
+      {
+        path: "pending-orders",
+        element: <PendingOrders></PendingOrders>
+      },
+      {
+        path: "approved-orders",
+        element: <ApprovedOrders></ApprovedOrders>
+      }
     ]
   }
 ]);
