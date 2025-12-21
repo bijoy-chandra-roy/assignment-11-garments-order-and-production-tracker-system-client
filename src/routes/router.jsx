@@ -14,7 +14,7 @@ import ProductDetails from "../pages/products/ProductDetails";
 import OrderPage from "../pages/Order/OrderPage";
 import MyOrders from "../pages/dashboard/user/MyOrders";
 import Payment from "../pages/dashboard/user/Payment";
-import PaymentSuccess from "../pages/dashboard/user/PaymentSuccsess";
+import PaymentSuccess from "../pages/dashboard/user/PaymentSuccess";
 import PaymentCancelled from "../pages/dashboard/user/PaymentCancelled";
 
 export const router = createBrowserRouter([
