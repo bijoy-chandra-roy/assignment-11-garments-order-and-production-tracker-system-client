@@ -13,7 +13,6 @@ const ProductForm = ({ onSubmit, defaultValues, isUpdate = false, loading = fals
     const [imagePreview, setImagePreview] = useState(null);
     const watchedImage = watch('image');
 
-    // Update form values when defaultValues change
     useEffect(() => {
         if (defaultValues) {
             reset(defaultValues);
@@ -23,12 +22,9 @@ const ProductForm = ({ onSubmit, defaultValues, isUpdate = false, loading = fals
         }
     }, [defaultValues, reset]);
 
-    // Handle new image selection preview
     useEffect(() => {
-        // FIX: Check if watchedImage is NOT a string (meaning it's a FileList from input)
         if (watchedImage && typeof watchedImage !== 'string' && watchedImage.length > 0) {
             const file = watchedImage[0];
-            // Ensure it is a valid File object before creating URL
             if(file instanceof File || file instanceof Blob){
                 setImagePreview(URL.createObjectURL(file));
             }

@@ -15,12 +15,8 @@ const ManageProducts = () => {
     const { data: products = [], isLoading, refetch } = useQuery({
         queryKey: ['my-products', user?.email],
         queryFn: async () => {
-            // We usually want to fetch all products without pagination for management
-            // or pass a large limit if your server paginates by default.
-            // For now, let's fetch with a high limit to ensure we get the manager's products
             const res = await axiosSecure.get('/products?size=1000'); 
             
-            // FIX: Access res.data.products because the server now returns { products, count }
             return res.data.products.filter(product => product.managerEmail === user.email);
         }
     });

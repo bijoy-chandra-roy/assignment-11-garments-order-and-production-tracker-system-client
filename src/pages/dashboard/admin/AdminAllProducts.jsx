@@ -12,9 +12,7 @@ const AdminAllProducts = () => {
     const { data: products = [], isLoading, refetch } = useQuery({
         queryKey: ['all-products'],
         queryFn: async () => {
-            // FIX: Pass size=1000 to get all products for admin view
             const res = await axiosSecure.get('/products?size=1000');
-            // FIX: Return res.data.products because the API now returns { products: [], count: 0 }
             return res.data.products;
         }
     });

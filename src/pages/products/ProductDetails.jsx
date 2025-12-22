@@ -1,17 +1,18 @@
 import React from 'react';
-import { useParams, Link } from 'react-router';
+import { useParams, Link, useLocation } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../../components/common/Loading';
 import useAuth from '../../hooks/useAuth';
 import useRole from '../../hooks/useRole';
 import useAxios from '../../hooks/useAxios';
-import { FaStar, FaBoxOpen, FaTag, FaDollarSign } from 'react-icons/fa';
+import { FaStar, FaBoxOpen, FaTag, FaDollarSign, FaMoneyBillWave, FaPlayCircle } from 'react-icons/fa';
 
 const ProductDetails = () => {
     const { id } = useParams();
     const { user } = useAuth();
     const { role } = useRole();
     const axiosPublic = useAxios();
+    const location = useLocation();
 
     const { data: product = null, isLoading } = useQuery({
         queryKey: ['product', id],
@@ -24,10 +25,8 @@ const ProductDetails = () => {
     if (isLoading) return <Loading />;
     if (!product) return <div className="text-center py-20 text-2xl font-bold text-error">Product not found</div>;
 
-    const { _id, name, image, category, price, quantity, description, rating } = product;
+    const { _id, name, image, category, price, quantity, description, rating, paymentMethod, video } = product;
 
-    // Logic: Only show Order button if user is NOT admin/manager.
-    // If not logged in, we still show the button but it redirects to login (handled in JSX).
     const canOrder = !user || (role !== 'admin' && role !== 'manager');
 
     return (
@@ -35,7 +34,7 @@ const ProductDetails = () => {
             <div className="flex flex-col lg:flex-row gap-12">
                 {/* Image Section */}
                 <div className="flex-1">
-                    <div className="rounded-2xl overflow-hidden shadow-2xl border border-base-200">
+                    <div className="rounded-2xl overflow-hidden shadow-2xl border border-base-200 h-[500px]">
                         <img src={image} alt={name} className="w-full h-full object-cover" />
                     </div>
                 </div>
@@ -43,7 +42,21 @@ const ProductDetails = () => {
                 {/* Details Section */}
                 <div className="flex-1 space-y-6">
                     <div>
-                        <div className="badge badge-primary badge-outline mb-4">{category}</div>
+                        <div className="flex justify-between items-start">
+                            <div className="badge badge-primary badge-outline mb-4">{category}</div>
+                            {/* FIX: Show Video Link if it exists */}
+                            {video && (
+                                <a 
+                                    href={video} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="btn btn-sm btn-outline btn-error gap-2"
+                                >
+                                    <FaPlayCircle /> Watch Demo
+                                </a>
+                            )}
+                        </div>
+                        
                         <h1 className="text-4xl font-bold mb-2 text-base-content">{name}</h1>
                         <div className="flex items-center gap-2 mb-4">
                             <div className="flex text-yellow-400">
@@ -83,6 +96,12 @@ const ProductDetails = () => {
                         <div className="flex items-center gap-3 text-base-content/70">
                             <FaTag className="text-primary" />
                             <span>Minimum Order Quantity: <strong>{product.minimumOrder || 50} Units</strong></span>
+                        </div>
+
+                        {/* FIX: Show Payment Method */}
+                        <div className="flex items-center gap-3 text-base-content/70">
+                            <FaMoneyBillWave className="text-primary" />
+                            <span>Payment Option: <strong>{paymentMethod || 'Online Payment'}</strong></span>
                         </div>
                         
                         <div className="mt-8">

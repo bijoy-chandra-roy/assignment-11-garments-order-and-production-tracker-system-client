@@ -20,7 +20,7 @@ const Payment = () => {
         axiosSecure.post('/create-checkout-session', { order })
             .then(res => {
                 if (res.data.url) {
-                    window.location.href = res.data.url; // Redirect to Stripe
+                    window.location.href = res.data.url;
                 }
             })
             .catch(err => console.error(err));

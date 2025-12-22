@@ -9,6 +9,7 @@ import DashboardTable from '../../../components/dashboard/DashboardTable';
 const ManageUsers = () => {
     const axiosSecure = useAxiosSecure();
     const [search, setSearch] = useState('');
+    const [filter, setFilter] = useState('all');
 
     const { data: users = [], refetch, isLoading, isFetching } = useQuery({
         queryKey: ['users', search],
@@ -19,7 +20,11 @@ const ManageUsers = () => {
         placeholderData: keepPreviousData, 
     });
 
-    // 1. Handle Make Admin
+    const filteredUsers = users.filter(user => {
+        if (filter === 'all') return true;
+        return user.role === filter;
+    });
+
     const handleMakeAdmin = (user) => {
         axiosSecure.patch(`/users/admin/${user._id}`)
             .then(res => {
@@ -35,7 +40,6 @@ const ManageUsers = () => {
             })
     }
 
-    // 2. Handle Suspend User (New Logic)
     const handleSuspendUser = (user) => {
         Swal.fire({
             title: `Suspend ${user.name}?`,
@@ -79,7 +83,6 @@ const ManageUsers = () => {
         });
     };
 
-    // 3. Handle Reactivate User (New Logic)
     const handleReactivateUser = (user) => {
         axiosSecure.patch(`/users/reactivate/${user._id}`)
             .then(res => {
@@ -90,7 +93,6 @@ const ManageUsers = () => {
             });
     }
 
-    // 4. Handle Delete User
     const handleDeleteUser = (user) => {
         Swal.fire({
             title: "Are you sure?",
@@ -124,7 +126,20 @@ const ManageUsers = () => {
             title="All Users" 
             headerAction={
                 <div className="flex flex-col md:flex-row gap-4 items-center">
-                    <h2 className="text-xl font-bold whitespace-nowrap">Total Users: {users.length}</h2>
+                    <h2 className="text-xl font-bold whitespace-nowrap">Total: {filteredUsers.length}</h2>
+                    
+                    {/* 3. Filter Dropdown Added Here */}
+                    <select 
+                        className="select select-bordered w-full max-w-xs"
+                        value={filter}
+                        onChange={(e) => setFilter(e.target.value)}
+                    >
+                        <option value="all">All Roles</option>
+                        <option value="admin">Admin</option>
+                        <option value="manager">Manager</option>
+                        <option value="buyer">Buyer</option>
+                    </select>
+
                     <label className="input input-bordered flex items-center gap-2">
                         <input 
                             type="text" 
@@ -144,13 +159,14 @@ const ManageUsers = () => {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Role</th>
-                    <th>Status</th> {/* New Status Column */}
+                    <th>Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 <div className={isFetching ? "opacity-50 pointer-events-none contents" : "contents"}>
-                    {users.map((user, index) => (
+                    {/* 4. Mapping over filteredUsers instead of users */}
+                    {filteredUsers.map((user, index) => (
                         <tr key={user._id}>
                             <th>{index + 1}</th>
                             <td>{user.name}</td>

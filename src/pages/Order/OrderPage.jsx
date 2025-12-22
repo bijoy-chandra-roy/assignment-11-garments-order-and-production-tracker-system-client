@@ -27,7 +27,6 @@ const OrderPage = () => {
         mode: 'onChange'
     });
 
-    // Fetch product details from Server
     const { data: product, isLoading } = useQuery({
         queryKey: ['order-product', id],
         queryFn: async () => {
@@ -36,7 +35,6 @@ const OrderPage = () => {
         }
     });
 
-    // Set price in form once product is loaded
     React.useEffect(() => {
         if (product) {
             setValue('price', product.price);
@@ -68,7 +66,8 @@ const OrderPage = () => {
             productImage: product.image,
             productName: product.name,
             email: user?.email,
-            userName: user?.displayName
+            userName: user?.displayName,
+            paymentMethod: product.paymentMethod 
         };
 
         axiosSecure.post('/orders', orderData)

@@ -7,7 +7,6 @@ import L from 'leaflet';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
 
-// Fix for Leaflet marker icons in React
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -34,16 +33,14 @@ const TrackOrder = () => {
     if (isLoading) return <Loading />;
 
     const trackingSteps = order.trackingHistory || [];
-    // Sort steps to show the timeline in chronological order
     const sortedSteps = [...trackingSteps].sort((a, b) => new Date(a.date) - new Date(b.date));
-    
-    // Default coordinates (e.g., Dhaka) since we are using text-based locations for this assignment
-    const position = [23.8103, 90.4125]; 
+
+    const position = [23.8103, 90.4125];
 
     return (
         <div className="space-y-8">
             <h2 className="text-3xl font-bold text-center">Order Tracking</h2>
-            
+
             {/* Order Info Summary */}
             <div className="card bg-base-100 shadow-xl border border-base-200">
                 <div className="card-body">
@@ -75,7 +72,7 @@ const TrackOrder = () => {
                 <div className="card bg-base-100 shadow-xl border border-base-200">
                     <div className="card-body">
                         <h3 className="card-title mb-6">Shipment Progress</h3>
-                        
+
                         {sortedSteps.length === 0 ? (
                             <div className="flex flex-col items-center justify-center h-40 text-gray-500">
                                 <p>Order is being processed.</p>
@@ -83,23 +80,45 @@ const TrackOrder = () => {
                             </div>
                         ) : (
                             <ul className="timeline timeline-vertical timeline-compact timeline-snap-icon">
-                                {sortedSteps.map((step, index) => (
-                                    <li key={index}>
-                                        <hr className={index === 0 ? 'hidden' : 'bg-primary'} />
-                                        <div className="timeline-middle">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5 text-primary"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" /></svg>
-                                        </div>
-                                        <div className="timeline-end mb-10">
-                                            <time className="font-mono italic text-xs opacity-70">
-                                                {new Date(step.date).toLocaleString()}
-                                            </time>
-                                            <div className="text-lg font-black">{step.status}</div>
-                                            <p className="text-sm font-semibold text-gray-600">Location: {step.location}</p>
-                                            {step.note && <p className="text-sm text-gray-500 mt-1">Note: {step.note}</p>}
-                                        </div>
-                                        <hr className={index === sortedSteps.length - 1 ? 'hidden' : 'bg-primary'} />
-                                    </li>
-                                ))}
+                                {sortedSteps.map((step, index) => {
+                                    const isLatest = index === sortedSteps.length - 1;
+
+                                    return (
+                                        <li key={index}>
+                                            <hr className={index === 0 ? 'hidden' : 'bg-primary'} />
+
+                                            <div className="timeline-middle">
+                                                <div className="w-6 h-6 flex items-center justify-center">
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 20 20"
+                                                        fill="currentColor"
+                                                        className={`${isLatest ? 'text-secondary h-6 w-6' : 'text-primary h-5 w-5'}`}
+                                                    >
+                                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+
+                                            <div className={`timeline-end mb-10 ${isLatest ? 'font-bold text-secondary scale-105 origin-left' : ''}`}>
+                                                <time className="font-mono italic text-xs opacity-70">
+                                                    {new Date(step.date).toLocaleString()}
+                                                </time>
+                                                <div className="text-lg font-black">{step.status}</div>
+                                                <p className="text-sm font-semibold text-gray-600">Location: {step.location}</p>
+                                                {step.note && <p className="text-sm text-gray-500 mt-1">Note: {step.note}</p>}
+
+                                                {isLatest && (
+                                                    <div className="badge badge-secondary badge-outline mt-2 animate-pulse">
+                                                        Current Status
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <hr className={index === sortedSteps.length - 1 ? 'hidden' : 'bg-primary'} />
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         )}
                     </div>

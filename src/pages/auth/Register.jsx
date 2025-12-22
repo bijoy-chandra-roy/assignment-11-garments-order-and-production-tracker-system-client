@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router';
 import Swal from 'sweetalert2';
 import useAuth from '../../hooks/useAuth';
 import useAxios from '../../hooks/useAxios';
-import { uploadImage } from '../../utilities/imageUpload'; // Import utility
+import { uploadImage } from '../../utilities/imageUpload';
 import SocialLogin from '../../components/auth/SocialLogin';
 
 const Register = () => {
@@ -26,10 +26,8 @@ const Register = () => {
 
     const onSubmit = async (data) => {
         try {
-            // Updated Logic: Call the utility function
             const imageUrl = await uploadImage(data.image[0]);
 
-            // Continue with authentication flow
             createUser(data.email, data.password)
                 .then(result => {
                     updateUserProfile(data.name, imageUrl)

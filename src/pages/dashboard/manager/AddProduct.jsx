@@ -56,7 +56,7 @@ const AddProduct = () => {
                     showConfirmButton: false,
                     timer: 1500
                 });
-                setFormKey(prev => prev + 1); // Reset form
+                setFormKey(prev => prev + 1);
             }
         } catch (error) {
             console.error(error);

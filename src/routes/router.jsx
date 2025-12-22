@@ -43,6 +43,7 @@ import AdminAllOrders from "../pages/dashboard/admin/AdminAllOrders";
 import AllProducts from "../pages/products/AllProducts";
 import ProductDetails from "../pages/products/ProductDetails";
 import OrderPage from "../pages/Order/OrderPage";
+import AdminManagerRoute from "./AdminManagerRoute";
 
 export const router = createBrowserRouter([
   {
@@ -102,7 +103,6 @@ export const router = createBrowserRouter([
         path: "all-orders",
         element: <AdminRoute><AdminAllOrders /></AdminRoute>
       },
-      // Note: "admin-home" route removed as it is now handled by index
 
       // Manager Routes
       {
@@ -115,7 +115,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "update-product/:id",
-        element: <ManagerRoute><UpdateProduct /></ManagerRoute>
+        element: <AdminManagerRoute><UpdateProduct /></AdminManagerRoute>
       },
       {
         path: "pending-orders",

@@ -34,7 +34,6 @@ const AdminHome = () => {
 
     const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-    // Custom Label for Pie Chart
     const RADIAN = Math.PI / 180;
     const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
         const radius = innerRadius + (outerRadius - innerRadius) * 0.5;

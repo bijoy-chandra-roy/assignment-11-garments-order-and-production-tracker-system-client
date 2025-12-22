@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import Swal from 'sweetalert2'; 
 import { Link } from 'react-router';
 import DashboardTable from '../../../components/dashboard/DashboardTable';
+import { FaEye, FaTrash } from 'react-icons/fa';
 
 const MyOrders = () => {
     const { user } = useAuth();
@@ -57,13 +58,14 @@ const MyOrders = () => {
 
     return (
         <DashboardTable title="My Orders">
+            {/* Requirement: | Order ID | Product | Quantity | Status | Payment | Actions | */}
             <thead className="bg-base-200">
                 <tr>
-                    <th>Image</th>
-                    <th>Product Name</th>
+                    <th>Order ID</th>
+                    <th>Product</th>
                     <th>Quantity</th>
-                    <th>Total Price</th>
                     <th>Status</th>
+                    <th>Payment</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -77,42 +79,83 @@ const MyOrders = () => {
                 ) : (
                     orders.map(order => (
                         <tr key={order._id}>
+                            {/* 1. Order ID Column */}
+                            <td className="font-mono text-xs">
+                                {order._id.slice(-6).toUpperCase()}
+                            </td>
+
+                            {/* 2. Product Column (Image + Name) */}
                             <td>
-                                <div className="avatar">
-                                    <div className="mask mask-squircle w-12 h-12">
-                                        <img src={order.productImage} alt="Product" />
+                                <div className="flex items-center gap-3">
+                                    <div className="avatar">
+                                        <div className="mask mask-squircle w-12 h-12">
+                                            <img src={order.productImage} alt="Product" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="font-bold">{order.productName}</div>
+                                        <div className="text-sm opacity-50">${order.totalPrice}</div>
                                     </div>
                                 </div>
                             </td>
-                            <td className="font-bold">{order.productName}</td>
+
+                            {/* 3. Quantity Column */}
                             <td>{order.quantity}</td>
-                            <td>${order.totalPrice}</td>
+
+                            {/* 4. Status Column */}
                             <td>
-                                <span className={`badge ${order.status === 'Pending' ? 'badge-warning' :
-                                    order.status === 'Approved' ? 'badge-success' : 'badge-error'
+                                <span className={`badge ${
+                                    order.status === 'Pending' ? 'badge-warning' :
+                                    order.status === 'Approved' ? 'badge-success' : 
+                                    'badge-error'
                                 } badge-outline font-bold`}>
                                     {order.status}
                                 </span>
                             </td>
+
+                            {/* 5. Payment Column */}
                             <td>
-                                {order.status === 'Pending' && !order.paymentStatus && (
+                                {/* Pay Button: Only if Pending, not COD, and not Paid */}
+                                {order.status === 'Pending' && order.paymentMethod !== 'Cash on Delivery' && !order.paymentStatus && (
                                     <Link to={`/dashboard/payment/${order._id}`}>
-                                        <button className="btn btn-sm btn-primary mr-2 text-black">Pay</button>
+                                        <button className="btn btn-sm btn-primary text-black font-bold">Pay</button>
                                     </Link>
                                 )}
 
-                                {order.paymentStatus === 'Paid' && (
-                                    <span className="badge badge-success badge-outline mr-2">Paid</span>
+                                {/* COD Badge */}
+                                {order.paymentMethod === 'Cash on Delivery' && (
+                                    <span className="badge badge-ghost font-bold">COD</span>
                                 )}
 
-                                {order.status === 'Pending' && (
-                                    <button
-                                        onClick={() => handleCancel(order._id)}
-                                        className="btn btn-sm btn-ghost text-error"
-                                    >
-                                        Cancel
-                                    </button>
+                                {/* Paid Badge */}
+                                {order.paymentStatus === 'Paid' && (
+                                    <span className="badge badge-success text-white font-bold">Paid</span>
                                 )}
+                            </td>
+
+                            {/* 6. Actions Column */}
+                            <td>
+                                <div className="flex items-center gap-2">
+                                    {/* View/Track Button */}
+                                    <Link 
+                                        to={`/dashboard/track-order/${order._id}`}
+                                        className="btn btn-sm btn-ghost btn-square"
+                                        title="View Details"
+                                    >
+                                        <FaEye className="text-lg" />
+                                    </Link>
+
+                                    {/* Cancel Button: Only if Pending */}
+                                    {order.status === 'Pending' && (
+                                        <button
+                                            onClick={() => handleCancel(order._id)}
+                                            className="btn btn-sm btn-ghost btn-square text-error"
+                                            title="Cancel Order"
+                                        >
+                                            <FaTrash className="text-lg" />
+                                        </button>
+                                    )}
+                                </div>
                             </td>
                         </tr>
                     ))

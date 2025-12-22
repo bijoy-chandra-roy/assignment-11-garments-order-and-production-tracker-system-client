@@ -5,8 +5,8 @@ import useAxios from '../../../hooks/useAxios';
 import Swal from 'sweetalert2';
 import Loading from '../../../components/common/Loading';
 import { uploadImage } from '../../../utilities/imageUpload';
-// Make sure this path is correct for your folder structure
 import ProductForm from '../../../components/products/ProductForm';
+import useRole from '../../../hooks/useRole';
 
 const UpdateProduct = () => {
     const { id } = useParams();
@@ -16,6 +16,7 @@ const UpdateProduct = () => {
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
     const [productData, setProductData] = useState(null);
+    const { role } = useRole(); 
 
     useEffect(() => {
         axiosPublic.get(`/products/${id}`)
@@ -35,7 +36,6 @@ const UpdateProduct = () => {
         let imageUrl = productData.image; 
 
         try {
-            // FIX: Only upload if 'image' is an object/file list, NOT a string URL
             if (data.image && typeof data.image !== 'string' && data.image.length > 0) {
                 imageUrl = await uploadImage(data.image[0]);
             }
@@ -47,7 +47,7 @@ const UpdateProduct = () => {
                 price: parseFloat(data.price),
                 quantity: parseInt(data.quantity),
                 minimumOrder: parseInt(data.minimumOrder),
-                image: imageUrl, // New URL or existing string
+                image: imageUrl, 
                 video: data.video || '',
                 paymentMethod: data.paymentMethod,
                 showOnHome: data.showOnHome === true
@@ -62,7 +62,12 @@ const UpdateProduct = () => {
                     showConfirmButton: false,
                     timer: 1500
                 });
-                navigate('/dashboard/manage-products'); 
+                
+                if (role === 'admin') {
+                    navigate('/dashboard/all-products');
+                } else {
+                    navigate('/dashboard/manage-products');
+                }
             } else {
                 Swal.fire("Info", "No changes were made", "info");
             }
