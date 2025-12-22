@@ -1,14 +1,14 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router';
-import { FaHome, FaShoppingBag, FaUser, FaBars, FaHistory, FaUsers, FaClipboardList, FaBoxOpen, FaPlusCircle, FaTasks, FaCheckCircle } from 'react-icons/fa';
+import { FaHome, FaShoppingBag, FaUser, FaBars, FaHistory, FaUsers, FaClipboardList, FaBoxOpen, FaPlusCircle, FaTasks, FaCheckCircle, FaChartPie } from 'react-icons/fa';
 import Navbar from '../shared/Navbar';
 import useAuth from '../hooks/useAuth';
 import useRole from '../hooks/useRole';
-import Footer from '../shared/footer';
+import Footer from '../shared/Footer';
 
 const DashboardLayout = () => {
     const { user } = useAuth();
-    const [role] = useRole();
+    const { role } = useRole();
 
     return (
         <div className="flex flex-col min-h-screen font-urbanist">
@@ -37,9 +37,22 @@ const DashboardLayout = () => {
                     <div className="flex min-h-full flex-col items-start bg-base-200 text-base-content border-r border-base-300 transition-all duration-300 is-drawer-close:w-[80px] is-drawer-open:w-72">
 
                         <ul className="menu w-full grow gap-2 p-4">
-                            {/* ADMIN DASHBOARD: Manage Users, All Products, All Orders */}
+                            {/* ADMIN DASHBOARD */}
                             {role === 'admin' && (
                                 <>
+                                    <li>
+                                        <NavLink
+                                            to="/dashboard/admin-home"
+                                            className={({ isActive }) =>
+                                                `flex items-center gap-4 p-3 rounded-lg transition-colors ${isActive ? 'bg-primary text-black font-bold' : 'hover:bg-base-300'}`
+                                            }
+                                        >
+                                            <span className="is-drawer-close:tooltip is-drawer-close:tooltip-right z-50" data-tip="Admin Home">
+                                                <FaChartPie className="text-xl" />
+                                            </span>
+                                            <span className="is-drawer-close:hidden whitespace-nowrap">Admin Home</span>
+                                        </NavLink>
+                                    </li>
                                     <li>
                                         <NavLink
                                             to="/dashboard/manage-users"
@@ -82,7 +95,7 @@ const DashboardLayout = () => {
                                 </>
                             )}
 
-                            {/* MANAGER DASHBOARD: Add Product, Manage Products, Pending Orders, Approved Orders */}
+                            {/* MANAGER DASHBOARD */}
                             {role === 'manager' && (
                                 <>
                                     <li>
@@ -140,7 +153,7 @@ const DashboardLayout = () => {
                                 </>
                             )}
 
-                            {/* BUYER DASHBOARD: My Orders, Payment History */}
+                            {/* BUYER DASHBOARD */}
                             {role === 'buyer' && (
                                 <>
                                     <li>
@@ -174,7 +187,7 @@ const DashboardLayout = () => {
 
                             <div className="divider my-2"></div>
 
-                            {/* Common Links: Profile and Home */}
+                            {/* Common Links: Profile only */}
                             <li>
                                 <NavLink
                                     to="/dashboard/profile"
@@ -186,18 +199,6 @@ const DashboardLayout = () => {
                                         <FaUser className="text-xl" />
                                     </span>
                                     <span className="is-drawer-close:hidden whitespace-nowrap">My Profile</span>
-                                </NavLink>
-                            </li>
-
-                            <li>
-                                <NavLink
-                                    to="/"
-                                    className="flex items-center gap-4 p-3 rounded-lg hover:bg-base-300 transition-colors"
-                                >
-                                    <span className="is-drawer-close:tooltip is-drawer-close:tooltip-right z-50" data-tip="Home">
-                                        <FaHome className="text-xl" />
-                                    </span>
-                                    <span className="is-drawer-close:hidden whitespace-nowrap">Back to Home</span>
                                 </NavLink>
                             </li>
                         </ul>

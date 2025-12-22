@@ -10,7 +10,7 @@ import { FaStar, FaBoxOpen, FaTag, FaDollarSign } from 'react-icons/fa';
 const ProductDetails = () => {
     const { id } = useParams();
     const { user } = useAuth();
-    const [role] = useRole();
+    const { role } = useRole();
     const axiosPublic = useAxios();
 
     const { data: product = null, isLoading } = useQuery({
