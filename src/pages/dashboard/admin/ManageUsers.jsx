@@ -1,19 +1,23 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { useQuery, keepPreviousData } from '@tanstack/react-query'; // Import keepPreviousData
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
-import { FaTrash, FaUsers } from 'react-icons/fa';
+import { FaTrash, FaUsers, FaSearch } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import DashboardTable from '../../../components/dashboard/DashboardTable';
 
 const ManageUsers = () => {
     const axiosSecure = useAxiosSecure();
-    const { data: users = [], refetch, isLoading } = useQuery({
-        queryKey: ['users'],
+    const [search, setSearch] = useState('');
+
+    const { data: users = [], refetch, isLoading, isFetching } = useQuery({
+        queryKey: ['users', search],
         queryFn: async () => {
-            const res = await axiosSecure.get('/users');
+            const res = await axiosSecure.get(`/users?search=${search}`);
             return res.data;
-        }
+        },
+        // THIS LINE FIXES THE FLICKERING
+        placeholderData: keepPreviousData, 
     });
 
     const handleMakeAdmin = (user) => {
@@ -57,12 +61,30 @@ const ManageUsers = () => {
         });
     }
 
+    // Only show full page loader on the very first load (when no data exists)
     if (isLoading) return <Loading />;
 
     return (
         <DashboardTable 
             title="All Users" 
-            headerAction={<h2 className="text-xl md:text-3xl font-bold">Total Users: {users.length}</h2>}
+            headerAction={
+                <div className="flex flex-col md:flex-row gap-4 items-center">
+                    <h2 className="text-xl font-bold whitespace-nowrap">Total Users: {users.length}</h2>
+                    
+                    {/* Search Input */}
+                    <label className="input input-bordered flex items-center gap-2">
+                        <input 
+                            type="text" 
+                            className="grow" 
+                            placeholder="Search users..." 
+                            onChange={(e) => setSearch(e.target.value)} 
+                            value={search}
+                            autoFocus // Optional: keeps focus if component re-renders
+                        />
+                        <FaSearch className="opacity-70" />
+                    </label>
+                </div>
+            }
         >
             <thead className="bg-base-200">
                 <tr>
@@ -74,29 +96,32 @@ const ManageUsers = () => {
                 </tr>
             </thead>
             <tbody>
-                {users.map((user, index) => (
-                    <tr key={user._id}>
-                        <th>{index + 1}</th>
-                        <td>{user.name}</td>
-                        <td>{user.email}</td>
-                        <td>
-                            {user.role === 'admin' ? 'Admin' : (
+                {/* Add a subtle opacity effect when fetching new data in background */}
+                <div className={isFetching ? "opacity-50 pointer-events-none contents" : "contents"}>
+                    {users.map((user, index) => (
+                        <tr key={user._id}>
+                            <th>{index + 1}</th>
+                            <td>{user.name}</td>
+                            <td>{user.email}</td>
+                            <td>
+                                {user.role === 'admin' ? 'Admin' : (
+                                    <button
+                                        onClick={() => handleMakeAdmin(user)}
+                                        className="btn btn-lg bg-orange-500 text-white">
+                                        <FaUsers className="text-2xl" />
+                                    </button>
+                                )}
+                            </td>
+                            <td>
                                 <button
-                                    onClick={() => handleMakeAdmin(user)}
-                                    className="btn btn-lg bg-orange-500 text-white">
-                                    <FaUsers className="text-2xl" />
+                                    onClick={() => handleDeleteUser(user)}
+                                    className="btn btn-ghost btn-lg text-error">
+                                    <FaTrash />
                                 </button>
-                            )}
-                        </td>
-                        <td>
-                            <button
-                                onClick={() => handleDeleteUser(user)}
-                                className="btn btn-ghost btn-lg text-error">
-                                <FaTrash />
-                            </button>
-                        </td>
-                    </tr>
-                ))}
+                            </td>
+                        </tr>
+                    ))}
+                </div>
             </tbody>
         </DashboardTable>
     );

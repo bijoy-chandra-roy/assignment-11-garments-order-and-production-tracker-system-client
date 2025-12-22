@@ -10,8 +10,10 @@ const OurProducts = () => {
     const { data: products = [], isLoading } = useQuery({
         queryKey: ['our-products'],
         queryFn: async () => {
+            // FIX: The API now returns an object { products: [], count: 0 }
+            // We need to return specifically the 'products' array
             const res = await axiosPublic.get('/products');
-            return res.data;
+            return res.data.products;
         }
     });
 

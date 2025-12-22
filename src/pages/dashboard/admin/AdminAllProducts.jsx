@@ -12,8 +12,10 @@ const AdminAllProducts = () => {
     const { data: products = [], isLoading, refetch } = useQuery({
         queryKey: ['all-products'],
         queryFn: async () => {
-            const res = await axiosSecure.get('/products');
-            return res.data;
+            // FIX: Pass size=1000 to get all products for admin view
+            const res = await axiosSecure.get('/products?size=1000');
+            // FIX: Return res.data.products because the API now returns { products: [], count: 0 }
+            return res.data.products;
         }
     });
 
@@ -74,47 +76,53 @@ const AdminAllProducts = () => {
                 </tr>
             </thead>
             <tbody>
-                {products.map((product) => (
-                    <tr key={product._id}>
-                        <td>
-                            <div className="avatar">
-                                <div className="mask mask-squircle w-12 h-12">
-                                    <img src={product.image} alt={product.name} />
-                                </div>
-                            </div>
-                        </td>
-                        <td className="font-bold">{product.name}</td>
-                        <td>${product.price}</td>
-                        <td>{product.category}</td>
-                        <td>
-                            <div className="flex flex-col">
-                                <span className="text-sm">{product.managerName}</span>
-                                <span className="text-xs opacity-50">{product.managerEmail}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <input 
-                                type="checkbox" 
-                                className="toggle toggle-primary" 
-                                checked={product.showOnHome || false}
-                                onChange={() => handleToggleHome(product)}
-                            />
-                        </td>
-                        <td className="flex gap-2">
-                            <Link to={`/dashboard/update-product/${product._id}`}>
-                                <button className="btn btn-sm btn-square btn-ghost text-info">
-                                    <FaEdit />
-                                </button>
-                            </Link>
-                            <button 
-                                onClick={() => handleDelete(product._id)}
-                                className="btn btn-sm btn-square btn-ghost text-error"
-                            >
-                                <FaTrash />
-                            </button>
-                        </td>
+                {products.length === 0 ? (
+                    <tr>
+                        <td colSpan="7" className="text-center py-8 text-gray-500">No products found.</td>
                     </tr>
-                ))}
+                ) : (
+                    products.map((product) => (
+                        <tr key={product._id}>
+                            <td>
+                                <div className="avatar">
+                                    <div className="mask mask-squircle w-12 h-12">
+                                        <img src={product.image} alt={product.name} />
+                                    </div>
+                                </div>
+                            </td>
+                            <td className="font-bold">{product.name}</td>
+                            <td>${product.price}</td>
+                            <td>{product.category}</td>
+                            <td>
+                                <div className="flex flex-col">
+                                    <span className="text-sm">{product.managerName}</span>
+                                    <span className="text-xs opacity-50">{product.managerEmail}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <input 
+                                    type="checkbox" 
+                                    className="toggle toggle-primary" 
+                                    checked={product.showOnHome || false}
+                                    onChange={() => handleToggleHome(product)}
+                                />
+                            </td>
+                            <td className="flex gap-2">
+                                <Link to={`/dashboard/update-product/${product._id}`}>
+                                    <button className="btn btn-sm btn-square btn-ghost text-info">
+                                        <FaEdit />
+                                    </button>
+                                </Link>
+                                <button 
+                                    onClick={() => handleDelete(product._id)}
+                                    className="btn btn-sm btn-square btn-ghost text-error"
+                                >
+                                    <FaTrash />
+                                </button>
+                            </td>
+                        </tr>
+                    ))
+                )}
             </tbody>
         </DashboardTable>
     );
