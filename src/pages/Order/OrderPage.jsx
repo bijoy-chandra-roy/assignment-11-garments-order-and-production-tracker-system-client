@@ -7,10 +7,12 @@ import Loading from '../../components/common/Loading';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import useAxios from '../../hooks/useAxios';
+import useUserInfo from '../../hooks/useUserInfo';
 
 const OrderPage = () => {
     const { id } = useParams();
     const { user } = useAuth();
+    const { userInfo } = useUserInfo();
     const axiosSecure = useAxiosSecure();
     const axiosPublic = useAxios();
     const navigate = useNavigate();
@@ -46,6 +48,16 @@ const OrderPage = () => {
     const totalPrice = orderQuantity ? (orderQuantity * price).toFixed(2) : 0;
 
     const onSubmit = (data) => {
+
+        if (userInfo.status === 'suspended') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Account Suspended',
+                text: 'You cannot place new orders. Please check your profile for details.',
+            });
+            return;
+        }
+        
         const orderData = {
             ...data,
             totalPrice: parseFloat(totalPrice),

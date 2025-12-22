@@ -5,9 +5,11 @@ import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
 import DashboardTable from '../../../components/dashboard/DashboardTable';
+import useUserInfo from '../../../hooks/useUserInfo';
 
 const PendingOrders = () => {
     const axiosSecure = useAxiosSecure();
+    const { userInfo } = useUserInfo();
 
     const { data: orders = [], isLoading, refetch } = useQuery({
         queryKey: ['pending-orders'],
@@ -18,6 +20,15 @@ const PendingOrders = () => {
     });
 
     const handleStatusUpdate = (id, status) => {
+        if (userInfo.status === 'suspended') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Access Denied',
+                text: 'Your account is suspended. You cannot approve or reject orders.',
+            });
+            return;
+        }
+        
         Swal.fire({
             title: `Are you sure you want to ${status} this order?`,
             icon: "warning",

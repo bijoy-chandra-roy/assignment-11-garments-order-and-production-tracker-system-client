@@ -4,15 +4,26 @@ import useAuth from '../../../hooks/useAuth';
 import Swal from 'sweetalert2';
 import { uploadImage } from '../../../utilities/imageUpload';
 import ProductForm from '../../../components/products/ProductForm';
+import useUserInfo from '../../../hooks/useUserInfo';
 
 const AddProduct = () => {
     const { user } = useAuth();
+    const { userInfo } = useUserInfo();
     const axiosSecure = useAxiosSecure();
     const [loading, setLoading] = useState(false);
-    // Key to force reset on success
     const [formKey, setFormKey] = useState(0);
 
     const onSubmit = async (data) => {
+
+        if (userInfo.status === 'suspended') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Access Denied',
+                text: 'Your account is suspended. You cannot add new products.',
+            });
+            return;
+        }
+        
         setLoading(true);
         try {
             const imageUrl = await uploadImage(data.image[0]);
