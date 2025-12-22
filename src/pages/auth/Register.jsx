@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router';
 import Swal from 'sweetalert2';
 import useAuth from '../../hooks/useAuth';
 import useAxios from '../../hooks/useAxios';
-import axios from 'axios';
+import { uploadImage } from '../../utilities/imageUpload'; // Import utility
 import SocialLogin from '../../components/auth/SocialLogin';
 
 const Register = () => {
@@ -25,57 +25,51 @@ const Register = () => {
     const from = location.state?.from?.pathname || "/";
 
     const onSubmit = async (data) => {
-        const imageFile = { image: data.image[0] }
-        const formData = new FormData();
-        formData.append('image', imageFile.image);
-
         try {
-            const res = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_imgbb_api_key}`, formData);
+            // Updated Logic: Call the utility function
+            const imageUrl = await uploadImage(data.image[0]);
 
-            if (res.data.success) {
-                const imageUrl = res.data.data.display_url;
-
-                createUser(data.email, data.password)
-                    .then(result => {
-                        updateUserProfile(data.name, imageUrl)
-                            .then(() => {
-                                const userInfo = {
-                                    name: data.name,
-                                    email: data.email,
-                                    role: data.role,
-                                    image: imageUrl,
-                                    status: 'pending'
-                                }
-                                axiosPublic.post('/users', userInfo)
-                                    .then(res => {
-                                        if (res.data.insertedId) {
-                                            reset();
-                                            Swal.fire({
-                                                icon: 'success',
-                                                title: 'User created successfully.',
-                                                showConfirmButton: false,
-                                                timer: 1500
-                                            });
-                                            navigate(from, { replace: true });
-                                        }
-                                    })
-                            })
-                            .catch(error => {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
-                                    text: error.message,
-                                });
-                            })
-                    })
-                    .catch(error => {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: error.message,
-                        });
-                    })
-            }
+            // Continue with authentication flow
+            createUser(data.email, data.password)
+                .then(result => {
+                    updateUserProfile(data.name, imageUrl)
+                        .then(() => {
+                            const userInfo = {
+                                name: data.name,
+                                email: data.email,
+                                role: data.role,
+                                image: imageUrl,
+                                status: 'pending'
+                            }
+                            axiosPublic.post('/users', userInfo)
+                                .then(res => {
+                                    if (res.data.insertedId) {
+                                        reset();
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'User created successfully.',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                        navigate(from, { replace: true });
+                                    }
+                                })
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: error.message,
+                            });
+                        })
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: error.message,
+                    });
+                })
         } catch (error) {
             console.error(error);
             Swal.fire({

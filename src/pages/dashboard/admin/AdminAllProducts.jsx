@@ -22,7 +22,6 @@ const AdminAllProducts = () => {
                 if(res.data.modifiedCount > 0){
                     refetch();
                     Swal.fire({
-                        position: "top-end",
                         icon: "success",
                         title: `Home page visibility updated`,
                         showConfirmButton: false,
