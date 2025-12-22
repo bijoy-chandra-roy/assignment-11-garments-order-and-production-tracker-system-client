@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
 import { Link } from 'react-router';
+import DashboardTable from '../../../components/dashboard/DashboardTable';
 
 const AdminAllProducts = () => {
     const axiosSecure = useAxiosSecure();
@@ -60,67 +61,62 @@ const AdminAllProducts = () => {
     if (isLoading) return <Loading />;
 
     return (
-        <div className="bg-base-100 p-8 rounded-xl shadow-lg border border-base-200">
-            <h2 className="text-3xl font-bold mb-6">All Products (Admin)</h2>
-            <div className="overflow-x-auto">
-                <table className="table table-zebra w-full">
-                    <thead className="bg-base-200">
-                        <tr>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Category</th>
-                            <th>Created By</th>
-                            <th>Show on Home</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {products.map((product) => (
-                            <tr key={product._id}>
-                                <td>
-                                    <div className="avatar">
-                                        <div className="mask mask-squircle w-12 h-12">
-                                            <img src={product.image} alt={product.name} />
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="font-bold">{product.name}</td>
-                                <td>${product.price}</td>
-                                <td>{product.category}</td>
-                                <td>
-                                    <div className="flex flex-col">
-                                        <span className="text-sm">{product.managerName}</span>
-                                        <span className="text-xs opacity-50">{product.managerEmail}</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <input 
-                                        type="checkbox" 
-                                        className="toggle toggle-primary" 
-                                        checked={product.showOnHome || false}
-                                        onChange={() => handleToggleHome(product)}
-                                    />
-                                </td>
-                                <td className="flex gap-2">
-                                    <Link to={`/dashboard/update-product/${product._id}`}>
-                                        <button className="btn btn-sm btn-square btn-ghost text-info">
-                                            <FaEdit />
-                                        </button>
-                                    </Link>
-                                    <button 
-                                        onClick={() => handleDelete(product._id)}
-                                        className="btn btn-sm btn-square btn-ghost text-error"
-                                    >
-                                        <FaTrash />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <DashboardTable title="All Products (Admin)">
+            <thead className="bg-base-200">
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th>Created By</th>
+                    <th>Show on Home</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {products.map((product) => (
+                    <tr key={product._id}>
+                        <td>
+                            <div className="avatar">
+                                <div className="mask mask-squircle w-12 h-12">
+                                    <img src={product.image} alt={product.name} />
+                                </div>
+                            </div>
+                        </td>
+                        <td className="font-bold">{product.name}</td>
+                        <td>${product.price}</td>
+                        <td>{product.category}</td>
+                        <td>
+                            <div className="flex flex-col">
+                                <span className="text-sm">{product.managerName}</span>
+                                <span className="text-xs opacity-50">{product.managerEmail}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <input 
+                                type="checkbox" 
+                                className="toggle toggle-primary" 
+                                checked={product.showOnHome || false}
+                                onChange={() => handleToggleHome(product)}
+                            />
+                        </td>
+                        <td className="flex gap-2">
+                            <Link to={`/dashboard/update-product/${product._id}`}>
+                                <button className="btn btn-sm btn-square btn-ghost text-info">
+                                    <FaEdit />
+                                </button>
+                            </Link>
+                            <button 
+                                onClick={() => handleDelete(product._id)}
+                                className="btn btn-sm btn-square btn-ghost text-error"
+                            >
+                                <FaTrash />
+                            </button>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </DashboardTable>
     );
 };
 

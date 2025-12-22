@@ -4,6 +4,7 @@ import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
 import { FaTrash, FaUsers } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+import DashboardTable from '../../../components/dashboard/DashboardTable';
 
 const ManageUsers = () => {
     const axiosSecure = useAxiosSecure();
@@ -59,50 +60,45 @@ const ManageUsers = () => {
     if (isLoading) return <Loading />;
 
     return (
-        <div>
-            <div className="flex justify-evenly my-4">
-                <h2 className="text-3xl font-bold">All Users</h2>
-                <h2 className="text-3xl font-bold">Total Users: {users.length}</h2>
-            </div>
-            <div className="overflow-x-auto bg-base-100 rounded-xl shadow-lg border border-base-200">
-                <table className="table table-zebra w-full">
-                    <thead className="bg-base-200">
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map((user, index) => (
-                            <tr key={user._id}>
-                                <th>{index + 1}</th>
-                                <td>{user.name}</td>
-                                <td>{user.email}</td>
-                                <td>
-                                    {user.role === 'admin' ? 'Admin' : (
-                                        <button
-                                            onClick={() => handleMakeAdmin(user)}
-                                            className="btn btn-lg bg-orange-500 text-white">
-                                            <FaUsers className="text-2xl" />
-                                        </button>
-                                    )}
-                                </td>
-                                <td>
-                                    <button
-                                        onClick={() => handleDeleteUser(user)}
-                                        className="btn btn-ghost btn-lg text-error">
-                                        <FaTrash />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <DashboardTable 
+            title="All Users" 
+            headerAction={<h2 className="text-xl md:text-3xl font-bold">Total Users: {users.length}</h2>}
+        >
+            <thead className="bg-base-200">
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {users.map((user, index) => (
+                    <tr key={user._id}>
+                        <th>{index + 1}</th>
+                        <td>{user.name}</td>
+                        <td>{user.email}</td>
+                        <td>
+                            {user.role === 'admin' ? 'Admin' : (
+                                <button
+                                    onClick={() => handleMakeAdmin(user)}
+                                    className="btn btn-lg bg-orange-500 text-white">
+                                    <FaUsers className="text-2xl" />
+                                </button>
+                            )}
+                        </td>
+                        <td>
+                            <button
+                                onClick={() => handleDeleteUser(user)}
+                                className="btn btn-ghost btn-lg text-error">
+                                <FaTrash />
+                            </button>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </DashboardTable>
     );
 };
 

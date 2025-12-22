@@ -4,6 +4,7 @@ import { FaCheck, FaTimes } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
+import DashboardTable from '../../../components/dashboard/DashboardTable';
 
 const PendingOrders = () => {
     const axiosSecure = useAxiosSecure();
@@ -52,71 +53,62 @@ const PendingOrders = () => {
     if (isLoading) return <Loading />;
 
     return (
-        <div className="bg-base-100 p-8 rounded-xl shadow-lg border border-base-200">
-            <h2 className="text-3xl font-bold mb-6">Pending Orders</h2>
-            
-            <div className="overflow-x-auto">
-                <table className="table table-zebra w-full">
-                    <thead className="bg-base-200">
-                        <tr>
-                            <th>Order ID</th>
-                            <th>User Email</th>
-                            <th>Product</th>
-                            <th>Qty</th>
-                            <th>Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {orders.length === 0 ? (
-                            <tr>
-                                <td colSpan="6" className="text-center py-8 text-gray-500">
-                                    No pending orders found.
-                                </td>
-                            </tr>
-                        ) : (
-                            orders.map((order) => (
-                                <tr key={order._id}>
-                                    <td className="font-mono text-xs">{order._id}</td>
-                                    <td>{order.email}</td>
-                                    <td>
-                                        <div className="flex items-center gap-3">
-                                            <div className="avatar">
-                                                <div className="mask mask-squircle w-10 h-10">
-                                                    <img src={order.productImage} alt="Product" />
-                                                </div>
-                                            </div>
-                                            <span className="font-bold">{order.productName}</span>
+        <DashboardTable title="Pending Orders">
+            <thead className="bg-base-200">
+                <tr>
+                    <th>Order ID</th>
+                    <th>User Email</th>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {orders.length === 0 ? (
+                    <tr>
+                        <td colSpan="6" className="text-center py-8 text-gray-500">
+                            No pending orders found.
+                        </td>
+                    </tr>
+                ) : (
+                    orders.map((order) => (
+                        <tr key={order._id}>
+                            <td className="font-mono text-xs">{order._id}</td>
+                            <td>{order.email}</td>
+                            <td>
+                                <div className="flex items-center gap-3">
+                                    <div className="avatar">
+                                        <div className="mask mask-squircle w-10 h-10">
+                                            <img src={order.productImage} alt="Product" />
                                         </div>
-                                    </td>
-                                    <td>{order.quantity}</td>
-                                    <td>{new Date(order.orderDate).toLocaleDateString()}</td>
-                                    <td className="flex gap-2">
-                                        {/* Approve Button */}
-                                        <button 
-                                            onClick={() => handleStatusUpdate(order._id, 'Approved')}
-                                            className="btn btn-sm btn-circle btn-success text-white"
-                                            title="Approve"
-                                        >
-                                            <FaCheck />
-                                        </button>
-
-                                        {/* Reject Button */}
-                                        <button 
-                                            onClick={() => handleStatusUpdate(order._id, 'Rejected')}
-                                            className="btn btn-sm btn-circle btn-error text-white"
-                                            title="Reject"
-                                        >
-                                            <FaTimes />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                                    </div>
+                                    <span className="font-bold">{order.productName}</span>
+                                </div>
+                            </td>
+                            <td>{order.quantity}</td>
+                            <td>{new Date(order.orderDate).toLocaleDateString()}</td>
+                            <td className="flex gap-2">
+                                <button 
+                                    onClick={() => handleStatusUpdate(order._id, 'Approved')}
+                                    className="btn btn-sm btn-circle btn-success text-white"
+                                    title="Approve"
+                                >
+                                    <FaCheck />
+                                </button>
+                                <button 
+                                    onClick={() => handleStatusUpdate(order._id, 'Rejected')}
+                                    className="btn btn-sm btn-circle btn-error text-white"
+                                    title="Reject"
+                                >
+                                    <FaTimes />
+                                </button>
+                            </td>
+                        </tr>
+                    ))
+                )}
+            </tbody>
+        </DashboardTable>
     );
 };
 
