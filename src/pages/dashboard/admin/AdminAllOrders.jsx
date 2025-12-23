@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { FaEye } from 'react-icons/fa';
+import { FaEye, FaMapMarkerAlt } from 'react-icons/fa';
+import { Link } from 'react-router';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
 import DashboardTable from '../../../components/dashboard/DashboardTable';
@@ -25,7 +26,6 @@ const AdminAllOrders = () => {
 
     const filteredOrders = orders.filter(order => {
         const matchesStatus = filter === 'All' ? true : order.status === filter;
-        
         const searchLower = search.toLowerCase();
         const matchesSearch = 
             order._id.toLowerCase().includes(searchLower) ||
@@ -104,14 +104,22 @@ const AdminAllOrders = () => {
                                         {order.status}
                                     </span>
                                 </td>
-                                <td>
+                                <td className="flex gap-2">
+                                    <Link 
+                                        to={`/dashboard/track-order/${order._id}`}
+                                        className="btn btn-sm btn-ghost btn-square text-info"
+                                        title="Track History"
+                                    >
+                                        <FaMapMarkerAlt className="text-lg" />
+                                    </Link>
+
                                     <label 
                                         htmlFor="admin_order_details_modal" 
                                         onClick={() => setSelectedOrder(order)}
-                                        className="btn btn-sm btn-ghost border border-base-300 cursor-pointer"
+                                        className="btn btn-sm btn-ghost btn-square cursor-pointer"
                                         title="View Full Details"
                                     >
-                                        <FaEye /> View
+                                        <FaEye className="text-lg" />
                                     </label>
                                 </td>
                             </tr>

@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import Swal from 'sweetalert2'; 
 import { Link } from 'react-router';
 import DashboardTable from '../../../components/dashboard/DashboardTable';
-import { FaEye, FaTrash } from 'react-icons/fa';
+import { FaEye, FaTrash, FaMapMarkerAlt } from 'react-icons/fa';
 import Helmet from '../../../components/common/Helmet';
 import OrderDetailsModal from '../../../components/dashboard/OrderDetailsModal';
 
@@ -86,7 +86,6 @@ const MyOrders = () => {
                                 <td className="font-mono text-xs">
                                     {order._id.slice(-6).toUpperCase()}
                                 </td>
-
                                 <td>
                                     <div className="flex items-center gap-3">
                                         <div className="avatar">
@@ -100,9 +99,7 @@ const MyOrders = () => {
                                         </div>
                                     </div>
                                 </td>
-
                                 <td>{order.quantity}</td>
-
                                 <td>
                                     <span className={`badge ${
                                         order.status === 'Pending' ? 'badge-warning' :
@@ -112,25 +109,29 @@ const MyOrders = () => {
                                         {order.status}
                                     </span>
                                 </td>
-
                                 <td>
                                     {order.status === 'Pending' && order.paymentMethod !== 'Cash on Delivery' && !order.paymentStatus && (
                                         <Link to={`/dashboard/payment/${order._id}`}>
                                             <button className="btn btn-sm btn-primary text-black font-bold">Pay</button>
                                         </Link>
                                     )}
-
                                     {order.paymentMethod === 'Cash on Delivery' && (
                                         <span className="badge badge-ghost font-bold">COD</span>
                                     )}
-
                                     {order.paymentStatus === 'Paid' && (
                                         <span className="badge badge-success text-white font-bold">Paid</span>
                                     )}
                                 </td>
-
                                 <td>
                                     <div className="flex items-center gap-2">
+                                        <Link 
+                                            to={`/dashboard/track-order/${order._id}`}
+                                            className="btn btn-sm btn-ghost btn-square text-info"
+                                            title="Track Order"
+                                        >
+                                            <FaMapMarkerAlt className="text-lg" />
+                                        </Link>
+
                                         <label 
                                             htmlFor="my_order_details_modal" 
                                             onClick={() => setSelectedOrder(order)}

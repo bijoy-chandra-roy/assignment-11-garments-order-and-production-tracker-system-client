@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { FaTruck, FaMapMarkerAlt, FaEye } from 'react-icons/fa';
+import { Link } from 'react-router';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
@@ -115,11 +116,19 @@ const ApprovedOrders = () => {
                                         >
                                             <FaTruck />
                                         </button>
-                                        
+
+                                        <Link 
+                                            to={`/dashboard/track-order/${order._id}`}
+                                            className="btn btn-sm btn-ghost btn-square text-info border border-base-300"
+                                            title="View Tracking Timeline"
+                                        >
+                                            <FaMapMarkerAlt />
+                                        </Link>
+
                                         <label 
                                             htmlFor="approved_order_details_modal" 
                                             onClick={() => setSelectedOrder(order)}
-                                            className="btn btn-sm btn-ghost border border-base-300 cursor-pointer"
+                                            className="btn btn-sm btn-ghost btn-square border border-base-300 cursor-pointer"
                                             title="View Full Details"
                                         >
                                             <FaEye />
