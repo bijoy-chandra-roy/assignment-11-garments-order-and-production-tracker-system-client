@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router';
 import { FaTruck, FaMapMarkerAlt, FaEye } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
@@ -9,6 +8,7 @@ import Loading from '../../../components/common/Loading';
 import DashboardTable from '../../../components/dashboard/DashboardTable';
 import Helmet from '../../../components/common/Helmet';
 import { formatDate } from '../../../utilities/dateFormat';
+import OrderDetailsModal from '../../../components/dashboard/OrderDetailsModal';
 
 const ApprovedOrders = () => {
     const axiosSecure = useAxiosSecure();
@@ -115,13 +115,15 @@ const ApprovedOrders = () => {
                                         >
                                             <FaTruck />
                                         </button>
-                                        <Link 
-                                            to={`/dashboard/track-order/${order._id}`}
-                                            className="btn btn-sm btn-ghost border border-base-300"
-                                            title="View Details"
+                                        
+                                        <label 
+                                            htmlFor="approved_order_details_modal" 
+                                            onClick={() => setSelectedOrder(order)}
+                                            className="btn btn-sm btn-ghost border border-base-300 cursor-pointer"
+                                            title="View Full Details"
                                         >
                                             <FaEye />
-                                        </Link>
+                                        </label>
                                     </div>
                                 </td>
                             </tr>
@@ -130,7 +132,11 @@ const ApprovedOrders = () => {
                 </tbody>
             </DashboardTable>
 
-            {/* Tracking Modal */}
+            <OrderDetailsModal 
+                order={selectedOrder} 
+                modalId="approved_order_details_modal" 
+            />
+
             <dialog id="tracking_modal" className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg mb-4">Update Production Status</h3>
