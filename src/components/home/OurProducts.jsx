@@ -11,14 +11,16 @@ const OurProducts = () => {
     const { data: products = [], isLoading } = useQuery({
         queryKey: ['our-products'],
         queryFn: async () => {
-            const res = await axiosPublic.get('/products');
+            const res = await axiosPublic.get('/products?size=100');
             return res.data.products;
         }
     });
 
     if (isLoading) return <Loading />;
 
-    const displayProducts = products.slice(0, 6);
+    const displayProducts = products
+        .filter(product => product.showOnHome === true)
+        .slice(0, 6);
 
     return (
         <div className="py-16 bg-base-100">
@@ -45,17 +47,23 @@ const OurProducts = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {displayProducts.map((product, index) => (
-                        <motion.div
-                            key={product._id}
-                            initial={{ opacity: 0, y: 50 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: index * 0.1 }}
-                        >
-                            <ProductCard product={product} />
-                        </motion.div>
-                    ))}
+                    {displayProducts.length > 0 ? (
+                        displayProducts.map((product, index) => (
+                            <motion.div
+                                key={product._id}
+                                initial={{ opacity: 0, y: 50 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                            >
+                                <ProductCard product={product} />
+                            </motion.div>
+                        ))
+                    ) : (
+                        <div className="col-span-full text-center text-gray-500">
+                            No featured products available.
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
