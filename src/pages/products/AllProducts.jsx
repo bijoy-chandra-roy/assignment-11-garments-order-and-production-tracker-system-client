@@ -51,17 +51,19 @@ const AllProducts = () => {
                     Explore our premium range of garments designed for style and durability.
                 </p>
 
-                <div className="max-w-md mx-auto">
-                    <label className="input input-bordered flex items-center gap-2">
-                        <input 
-                            type="text" 
-                            className="grow" 
-                            placeholder="Search products..." 
-                            onChange={handleSearch} 
-                            value={search}
-                        />
-                        <FaSearch className="opacity-70" />
-                    </label>
+                <div className="w-full flex justify-center">
+                    <div className="w-full max-w-md">
+                        <label className="input input-bordered flex items-center gap-2 mx-auto">
+                            <input 
+                                type="text" 
+                                className="grow" 
+                                placeholder="Search products..." 
+                                onChange={handleSearch} 
+                                value={search}
+                            />
+                            <FaSearch className="opacity-70" />
+                        </label>
+                    </div>
                 </div>
             </div>
 
