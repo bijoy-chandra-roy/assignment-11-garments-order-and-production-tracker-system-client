@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import useAuth from '../../../hooks/useAuth';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Swal from 'sweetalert2'; 
 import { Link } from 'react-router';
 import DashboardTable from '../../../components/dashboard/DashboardTable';
@@ -14,6 +14,7 @@ const MyOrders = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const queryClient = useQueryClient();
 
     const { data: orders = [], isLoading, refetch } = useQuery({
         queryKey: ['orders', user?.email],
@@ -37,6 +38,7 @@ const MyOrders = () => {
                 axiosSecure.delete(`/orders/${id}`)
                     .then(res => {
                         if (res.data.deletedCount > 0) {
+                            queryClient.invalidateQueries(['products']);
                             refetch(); 
                             Swal.fire({
                                 title: "Cancelled!",

@@ -34,23 +34,20 @@ const ProductDetails = () => {
         <div className="max-w-7xl min-h-screen mx-auto px-4 py-12 bg-base-100">
             <Helmet title={product?.name || "Product Details"} />
             <div className="flex flex-col lg:flex-row gap-12">
-                {/* Image Section */}
                 <div className="flex-1">
                     <div className="rounded-2xl overflow-hidden shadow-2xl border border-base-200 h-[500px]">
                         <img src={image} alt={name} className="w-full h-full object-cover" />
                     </div>
                 </div>
 
-                {/* Details Section */}
                 <div className="flex-1 space-y-6">
                     <div>
                         <div className="flex justify-between items-start">
                             <div className="badge badge-primary badge-outline mb-4">{category}</div>
-                            {/* FIX: Show Video Link if it exists */}
                             {video && (
-                                <a 
-                                    href={video} 
-                                    target="_blank" 
+                                <a
+                                    href={video}
+                                    target="_blank"
                                     rel="noopener noreferrer"
                                     className="btn btn-sm btn-outline btn-error gap-2"
                                 >
@@ -58,7 +55,7 @@ const ProductDetails = () => {
                                 </a>
                             )}
                         </div>
-                        
+
                         <h1 className="text-4xl font-bold mb-2 text-base-content">{name}</h1>
                         <div className="flex items-center gap-2 mb-4">
                             <div className="flex text-yellow-400">
@@ -100,12 +97,11 @@ const ProductDetails = () => {
                             <span>Minimum Order Quantity: <strong>{product.minimumOrder || 50} Units</strong></span>
                         </div>
 
-                        {/* FIX: Show Payment Method */}
                         <div className="flex items-center gap-3 text-base-content/70">
                             <FaMoneyBillWave className="text-primary" />
                             <span>Payment Option: <strong>{paymentMethod || 'Online Payment'}</strong></span>
                         </div>
-                        
+
                         <div className="mt-8">
                             {!user ? (
                                 <div className="text-center">
@@ -113,9 +109,11 @@ const ProductDetails = () => {
                                     <Link to="/login" state={{ from: location }} className="btn btn-secondary w-full">Login to Order</Link>
                                 </div>
                             ) : canOrder ? (
-                                <Link to={`/order/${_id}`} className="btn btn-primary btn-lg w-full text-black font-bold shadow-lg hover:shadow-xl transition-all">
-                                    Order Now
-                                </Link>
+                                quantity > 0 ? (
+                                    <Link to={`/order/${_id}`} className="btn btn-primary ...">Order Now</Link>
+                                ) : (
+                                    <button disabled className="btn btn-error w-full">Out of Stock</button>
+                                )
                             ) : (
                                 <button disabled className="btn btn-disabled w-full">
                                     Ordering Restricted (Role: {role})

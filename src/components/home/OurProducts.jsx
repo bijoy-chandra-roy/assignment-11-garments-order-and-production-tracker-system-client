@@ -8,19 +8,17 @@ import { motion } from 'framer-motion';
 const OurProducts = () => {
     const axiosPublic = useAxios();
 
-    const { data: products = [], isLoading } = useQuery({
+    const { data, isLoading } = useQuery({
         queryKey: ['our-products'],
         queryFn: async () => {
-            const res = await axiosPublic.get('/products?size=100');
-            return res.data.products;
+            const res = await axiosPublic.get('/products?size=6&showOnHome=true');
+            return res.data;
         }
     });
 
     if (isLoading) return <Loading />;
 
-    const displayProducts = products
-        .filter(product => product.showOnHome === true)
-        .slice(0, 6);
+    const displayProducts = data?.products || [];
 
     return (
         <div className="py-16 bg-base-100">
