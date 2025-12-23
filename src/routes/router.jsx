@@ -44,6 +44,7 @@ import AllProducts from "../pages/products/AllProducts";
 import ProductDetails from "../pages/products/ProductDetails";
 import OrderPage from "../pages/Order/OrderPage";
 import AdminManagerRoute from "./AdminManagerRoute";
+import AdminHome from "../pages/dashboard/admin/AdminHome";
 
 export const router = createBrowserRouter([
   {
@@ -94,6 +95,10 @@ export const router = createBrowserRouter([
       {
         path: "manage-users",
         element: <AdminRoute><ManageUsers /></AdminRoute>
+      },
+      {
+        path: "admin-home",
+        element: <AdminRoute><AdminHome /></AdminRoute>
       },
       {
         path: "all-products",

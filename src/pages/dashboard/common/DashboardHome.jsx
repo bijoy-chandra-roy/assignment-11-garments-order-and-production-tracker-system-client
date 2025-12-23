@@ -1,10 +1,7 @@
 import React from 'react';
+import { Navigate } from 'react-router';
 import useRole from '../../../hooks/useRole';
 import Loading from '../../../components/common/Loading';
-import AdminHome from '../admin/AdminHome';
-import ManageProducts from '../manager/ManageProducts';
-import MyOrders from '../user/MyOrders';
-import Profile from './Profile';
 
 const DashboardHome = () => {
     const { role, roleLoading } = useRole();
@@ -12,18 +9,18 @@ const DashboardHome = () => {
     if (roleLoading) return <Loading />;
 
     if (role === 'admin') {
-        return <AdminHome />;
+        return <Navigate to="/dashboard/admin-home" replace />;
     }
     
     if (role === 'manager') {
-        return <ManageProducts />;
+        return <Navigate to="/dashboard/manage-products" replace />;
     }
 
     if (role === 'buyer') {
-        return <MyOrders />;
+        return <Navigate to="/dashboard/my-orders" replace />;
     }
 
-    return <Profile />;
+    return <Navigate to="/dashboard/profile" replace />;
 };
 
 export default DashboardHome;
