@@ -18,12 +18,12 @@ const OrderPage = () => {
     const axiosPublic = useAxios();
     const navigate = useNavigate();
 
-    const { 
-        register, 
-        handleSubmit, 
+    const {
+        register,
+        handleSubmit,
         watch,
         setValue,
-        formState: { errors } 
+        formState: { errors }
     } = useForm({
         mode: 'onChange'
     });
@@ -47,7 +47,6 @@ const OrderPage = () => {
     const totalPrice = orderQuantity ? (orderQuantity * price).toFixed(2) : 0;
 
     const onSubmit = (data) => {
-
         if (userInfo.status === 'suspended') {
             Swal.fire({
                 icon: 'error',
@@ -56,7 +55,7 @@ const OrderPage = () => {
             });
             return;
         }
-        
+
         const orderData = {
             ...data,
             totalPrice: parseFloat(totalPrice),
@@ -67,8 +66,8 @@ const OrderPage = () => {
             productImage: product.image,
             productName: product.name,
             email: user?.email,
-            userName: user?.displayName,
-            paymentMethod: product.paymentMethod 
+            userName: `${data.firstName} ${data.lastName}`,
+            paymentMethod: product.paymentMethod
         };
 
         axiosSecure.post('/orders', orderData)
@@ -80,7 +79,12 @@ const OrderPage = () => {
                         showConfirmButton: false,
                         timer: 1500
                     });
-                    navigate('/dashboard/my-orders'); 
+
+                    if (product.paymentMethod === 'PayFirst') {
+                        navigate(`/dashboard/payment/${res.data.insertedId}`);
+                    } else {
+                        navigate('/dashboard/my-orders');
+                    }
                 }
             })
             .catch(error => {
@@ -96,15 +100,22 @@ const OrderPage = () => {
     if (isLoading) return <Loading />;
     if (!product) return <div className="text-center py-20 text-error">Product not found</div>;
 
+    const nameParts = user?.displayName ? user.displayName.split(' ') : [];
+    const defaultFirstName = nameParts[0] || '';
+    const defaultLastName = nameParts.slice(1).join(' ') || '';
+
+    const minQty = product.minimumOrder || 1;
+    const maxQty = product.quantity;
+
     return (
         <div className="max-w-4xl min-h-screen mx-auto px-4 py-12 font-urbanist">
             <Helmet title="Place Order" />
             <h2 className="text-4xl font-bold text-center mb-8">Confirm Your Order</h2>
-            
+
             <div className="card bg-base-200 shadow-2xl border border-base-300">
                 <div className="card-body p-8">
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                        
+
                         {/* Section 1: Product & Buyer Info */}
                         <div>
                             <h3 className="text-xl font-semibold mb-4 text-primary">Order Summary</h3>
@@ -113,36 +124,49 @@ const OrderPage = () => {
                                     <label className="label">
                                         <span className="label-text font-medium">Product Name</span>
                                     </label>
-                                    <input 
-                                        type="text" 
-                                        defaultValue={product.name} 
-                                        readOnly 
-                                        className="input input-bordered w-full bg-base-100 focus:outline-none" 
+                                    <input
+                                        type="text"
+                                        defaultValue={product.name}
+                                        readOnly
+                                        className="input input-bordered w-full bg-base-100 focus:outline-none"
                                     />
                                 </div>
 
                                 <div className="form-control">
                                     <label className="label">
-                                        <span className="label-text font-medium">Buyer Name</span>
+                                        <span className="label-text font-medium">First Name</span>
                                     </label>
-                                    <input 
-                                        type="text" 
-                                        defaultValue={user?.displayName} 
-                                        readOnly 
-                                        className="input input-bordered w-full bg-base-100 focus:outline-none" 
-                                        {...register("userName")}
+                                    <input
+                                        type="text"
+                                        defaultValue={defaultFirstName}
+                                        className="input input-bordered w-full bg-base-100"
+                                        {...register("firstName", { required: "First name is required" })}
                                     />
+                                    {errors.firstName && <span className="text-error text-sm mt-1">{errors.firstName.message}</span>}
+                                </div>
+
+                                <div className="form-control">
+                                    <label className="label">
+                                        <span className="label-text font-medium">Last Name</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        defaultValue={defaultLastName}
+                                        className="input input-bordered w-full bg-base-100"
+                                        {...register("lastName", { required: "Last name is required" })}
+                                    />
+                                    {errors.lastName && <span className="text-error text-sm mt-1">{errors.lastName.message}</span>}
                                 </div>
 
                                 <div className="form-control">
                                     <label className="label">
                                         <span className="label-text font-medium">Unit Price</span>
                                     </label>
-                                    <input 
-                                        type="text" 
-                                        defaultValue={`$${product.price}`} 
-                                        readOnly 
-                                        className="input input-bordered w-full bg-base-100 focus:outline-none" 
+                                    <input
+                                        type="text"
+                                        defaultValue={`$${product.price}`}
+                                        readOnly
+                                        className="input input-bordered w-full bg-base-100 focus:outline-none"
                                     />
                                 </div>
 
@@ -150,11 +174,11 @@ const OrderPage = () => {
                                     <label className="label">
                                         <span className="label-text font-medium">Buyer Email</span>
                                     </label>
-                                    <input 
-                                        type="email" 
-                                        defaultValue={user?.email} 
-                                        readOnly 
-                                        className="input input-bordered w-full bg-base-100 focus:outline-none" 
+                                    <input
+                                        type="email"
+                                        defaultValue={user?.email}
+                                        readOnly
+                                        className="input input-bordered w-full bg-base-100 focus:outline-none"
                                         {...register("email")}
                                     />
                                 </div>
@@ -169,18 +193,35 @@ const OrderPage = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="form-control">
                                     <label className="label">
-                                        <span className="label-text font-medium">Quantity (Max: {product.quantity})</span>
+                                        <span className="label-text font-medium">Quantity (Min: {minQty}, Max: {maxQty})</span>
                                     </label>
-                                    <input 
-                                        type="number" 
-                                        placeholder="Enter quantity" 
+                                    <input
+                                        type="number"
+                                        placeholder="Enter quantity"
+                                        min={minQty}
+                                        max={maxQty}
                                         className="input input-bordered input-primary w-full bg-base-100"
-                                        {...register("quantity", { 
+                                        {...register("quantity", {
                                             required: "Quantity is required",
-                                            min: { value: 1, message: "Minimum order is 1" },
-                                            max: { value: product.quantity, message: `Max available is ${product.quantity}` },
-                                            valueAsNumber: true
-                                        })} 
+                                            min: {
+                                                value: minQty,
+                                                message: `Minimum order is ${minQty}`
+                                            },
+                                            max: {
+                                                value: maxQty,
+                                                message: `Max available is ${maxQty}`
+                                            },
+                                            valueAsNumber: true,
+                                            onChange: (e) => {
+                                                const val = parseInt(e.target.value);
+                                                if (val > maxQty) {
+                                                    setValue('quantity', maxQty);
+                                                }
+                                                if (val < 0) {
+                                                    setValue('quantity', minQty);
+                                                }
+                                            }
+                                        })}
                                     />
                                     {errors.quantity && <span className="text-error text-sm mt-1">{errors.quantity.message}</span>}
                                 </div>
@@ -189,11 +230,11 @@ const OrderPage = () => {
                                     <label className="label">
                                         <span className="label-text font-medium">Total Amount</span>
                                     </label>
-                                    <input 
-                                        type="text" 
-                                        value={`$${totalPrice}`} 
-                                        readOnly 
-                                        className="input input-bordered w-full bg-base-100 font-bold text-lg text-primary focus:outline-none" 
+                                    <input
+                                        type="text"
+                                        value={`$${totalPrice}`}
+                                        readOnly
+                                        className="input input-bordered w-full bg-base-100 font-bold text-lg text-primary focus:outline-none"
                                     />
                                 </div>
                             </div>
@@ -209,10 +250,10 @@ const OrderPage = () => {
                                     <label className="label">
                                         <span className="label-text font-medium">Delivery Address</span>
                                     </label>
-                                    <input 
-                                        type="text" 
-                                        placeholder="Street, City, Country" 
-                                        className="input input-bordered w-full bg-base-100" 
+                                    <input
+                                        type="text"
+                                        placeholder="Street, City, Country"
+                                        className="input input-bordered w-full bg-base-100"
                                         {...register("address", { required: "Address is required" })}
                                     />
                                     {errors.address && <span className="text-error text-sm mt-1">{errors.address.message}</span>}
@@ -222,10 +263,10 @@ const OrderPage = () => {
                                     <label className="label">
                                         <span className="label-text font-medium">Phone Number</span>
                                     </label>
-                                    <input 
-                                        type="tel" 
-                                        placeholder="Your contact number" 
-                                        className="input input-bordered w-full bg-base-100" 
+                                    <input
+                                        type="tel"
+                                        placeholder="Your contact number"
+                                        className="input input-bordered w-full bg-base-100"
                                         {...register("phone", { required: "Phone number is required" })}
                                     />
                                     {errors.phone && <span className="text-error text-sm mt-1">{errors.phone.message}</span>}
