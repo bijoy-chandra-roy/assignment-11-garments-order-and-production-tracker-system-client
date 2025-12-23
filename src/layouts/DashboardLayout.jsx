@@ -31,7 +31,7 @@ const DashboardLayout = () => {
                     <Outlet />
                 </div>
 
-                <div className="drawer-side z-40 is-drawer-close:overflow-visible">
+                <div className="drawer-side z-50 is-drawer-close:overflow-visible">
                     <label htmlFor="dashboard-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
 
                     <div className="flex min-h-full flex-col items-start bg-base-200 text-base-content border-r border-base-300 transition-all duration-300 is-drawer-close:w-[80px] is-drawer-open:w-72">
