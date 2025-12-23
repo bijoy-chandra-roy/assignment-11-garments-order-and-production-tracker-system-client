@@ -46,7 +46,9 @@ const Navbar = () => {
                         {links}
                     </ul>
                 </div>
-                <Logo />
+                <Link to="/">
+                    <Logo hideTextOnMobile={true} />
+                </Link>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1 gap-2">
