@@ -75,51 +75,73 @@ const PendingOrders = () => {
                     <th>Product</th>
                     <th>Qty</th>
                     <th>Date</th>
+                    <th>Payment</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {orders.length === 0 ? (
                     <tr>
-                        <td colSpan="6" className="text-center py-8 text-gray-500">
+                        <td colSpan="7" className="text-center py-8 text-gray-500">
                             No pending orders found.
                         </td>
                     </tr>
                 ) : (
-                    orders.map((order) => (
-                        <tr key={order._id}>
-                            <td className="font-mono text-xs">{order._id}</td>
-                            <td>{order.email}</td>
-                            <td>
-                                <div className="flex items-center gap-3">
-                                    <div className="avatar">
-                                        <div className="mask mask-squircle w-10 h-10">
-                                            <img src={order.productImage} alt="Product" />
+                    orders.map((order) => {
+                        const isPayFirst = order.paymentMethod === 'PayFirst';
+                        const isUnpaid = order.paymentStatus !== 'Paid';
+                        const isApprovalDisabled = isPayFirst && isUnpaid;
+
+                        return (
+                            <tr key={order._id}>
+                                <td className="font-mono text-xs">{order._id.slice(-6).toUpperCase()}</td>
+                                <td>{order.email}</td>
+                                <td>
+                                    <div className="flex items-center gap-3">
+                                        <div className="avatar">
+                                            <div className="mask mask-squircle w-10 h-10">
+                                                <img src={order.productImage} alt="Product" />
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="font-bold">{order.productName}</span>
+                                            <span className="text-xs opacity-50">${order.totalPrice}</span>
                                         </div>
                                     </div>
-                                    <span className="font-bold">{order.productName}</span>
-                                </div>
-                            </td>
-                            <td>{order.quantity}</td>
-                            <td>{formatDate(order.orderDate)}</td>
-                            <td className="flex gap-2">
-                                <button 
-                                    onClick={() => handleStatusUpdate(order._id, 'Approved')}
-                                    className="btn btn-sm btn-circle btn-success text-white"
-                                    title="Approve"
-                                >
-                                    <FaCheck />
-                                </button>
-                                <button 
-                                    onClick={() => handleStatusUpdate(order._id, 'Rejected')}
-                                    className="btn btn-sm btn-circle btn-error text-white"
-                                    title="Reject"
-                                >
-                                    <FaTimes />
-                                </button>
-                            </td>
-                        </tr>
-                    ))
+                                </td>
+                                <td>{order.quantity}</td>
+                                <td>{formatDate(order.orderDate)}</td>
+
+                                <td>
+                                    {order.paymentMethod === 'Cash on Delivery' ? (
+                                        <span className="badge badge-ghost badge-xs">COD</span>
+                                    ) : (
+                                        <span className={`badge badge-xs ${order.paymentStatus === 'Paid' ? 'badge-success text-white' : 'badge-warning'}`}>
+                                            {order.paymentStatus || 'Unpaid'}
+                                        </span>
+                                    )}
+                                </td>
+
+                                <td className="flex gap-2">
+                                    <button 
+                                        onClick={() => handleStatusUpdate(order._id, 'Approved')}
+                                        disabled={isApprovalDisabled}
+                                        className="btn btn-sm btn-circle btn-success text-white disabled:bg-gray-300 disabled:text-gray-500"
+                                        title={isApprovalDisabled ? "Payment Required" : "Approve"}
+                                    >
+                                        <FaCheck />
+                                    </button>
+                                    <button 
+                                        onClick={() => handleStatusUpdate(order._id, 'Rejected')}
+                                        className="btn btn-sm btn-circle btn-error text-white"
+                                        title="Reject"
+                                    >
+                                        <FaTimes />
+                                    </button>
+                                </td>
+                            </tr>
+                        );
+                    })
                 )}
             </tbody>
         </DashboardTable>
