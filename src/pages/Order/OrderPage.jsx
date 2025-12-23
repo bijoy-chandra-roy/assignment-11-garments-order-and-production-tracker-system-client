@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams, useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
@@ -17,6 +17,7 @@ const OrderPage = () => {
     const axiosSecure = useAxiosSecure();
     const axiosPublic = useAxios();
     const navigate = useNavigate();
+    const [submitting, setSubmitting] = useState(false);
 
     const {
         register,
@@ -36,7 +37,7 @@ const OrderPage = () => {
         }
     });
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (product) {
             setValue('price', product.price);
         }
@@ -55,6 +56,8 @@ const OrderPage = () => {
             });
             return;
         }
+
+        setSubmitting(true);
 
         const orderData = {
             ...data,
@@ -94,6 +97,9 @@ const OrderPage = () => {
                     title: 'Oops...',
                     text: 'Something went wrong!',
                 });
+            })
+            .finally(() => {
+                setSubmitting(false);
             });
     };
 
@@ -106,6 +112,9 @@ const OrderPage = () => {
 
     const minQty = product.minimumOrder || 1;
     const maxQty = product.quantity;
+
+    const inputClass = "input input-bordered w-full focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-base-100";
+    const readOnlyClass = "input input-bordered w-full bg-base-200 focus:outline-none cursor-not-allowed";
 
     return (
         <div className="max-w-4xl min-h-screen mx-auto px-4 py-12 font-urbanist">
@@ -128,7 +137,7 @@ const OrderPage = () => {
                                         type="text"
                                         defaultValue={product.name}
                                         readOnly
-                                        className="input input-bordered w-full bg-base-100 focus:outline-none"
+                                        className={readOnlyClass}
                                     />
                                 </div>
 
@@ -139,7 +148,7 @@ const OrderPage = () => {
                                     <input
                                         type="text"
                                         defaultValue={defaultFirstName}
-                                        className="input input-bordered w-full bg-base-100"
+                                        className={inputClass}
                                         {...register("firstName", { required: "First name is required" })}
                                     />
                                     {errors.firstName && <span className="text-error text-sm mt-1">{errors.firstName.message}</span>}
@@ -152,7 +161,7 @@ const OrderPage = () => {
                                     <input
                                         type="text"
                                         defaultValue={defaultLastName}
-                                        className="input input-bordered w-full bg-base-100"
+                                        className={inputClass}
                                         {...register("lastName", { required: "Last name is required" })}
                                     />
                                     {errors.lastName && <span className="text-error text-sm mt-1">{errors.lastName.message}</span>}
@@ -166,7 +175,7 @@ const OrderPage = () => {
                                         type="text"
                                         defaultValue={`$${product.price}`}
                                         readOnly
-                                        className="input input-bordered w-full bg-base-100 focus:outline-none"
+                                        className={readOnlyClass}
                                     />
                                 </div>
 
@@ -178,7 +187,7 @@ const OrderPage = () => {
                                         type="email"
                                         defaultValue={user?.email}
                                         readOnly
-                                        className="input input-bordered w-full bg-base-100 focus:outline-none"
+                                        className={readOnlyClass}
                                         {...register("email")}
                                     />
                                 </div>
@@ -200,7 +209,7 @@ const OrderPage = () => {
                                         placeholder="Enter quantity"
                                         min={minQty}
                                         max={maxQty}
-                                        className="input input-bordered input-primary w-full bg-base-100"
+                                        className={inputClass}
                                         {...register("quantity", {
                                             required: "Quantity is required",
                                             min: {
@@ -234,7 +243,7 @@ const OrderPage = () => {
                                         type="text"
                                         value={`$${totalPrice}`}
                                         readOnly
-                                        className="input input-bordered w-full bg-base-100 font-bold text-lg text-primary focus:outline-none"
+                                        className="input input-bordered w-full bg-base-100 font-bold text-lg text-primary focus:outline-none cursor-not-allowed"
                                     />
                                 </div>
                             </div>
@@ -253,7 +262,7 @@ const OrderPage = () => {
                                     <input
                                         type="text"
                                         placeholder="Street, City, Country"
-                                        className="input input-bordered w-full bg-base-100"
+                                        className={inputClass}
                                         {...register("address", { required: "Address is required" })}
                                     />
                                     {errors.address && <span className="text-error text-sm mt-1">{errors.address.message}</span>}
@@ -266,7 +275,7 @@ const OrderPage = () => {
                                     <input
                                         type="tel"
                                         placeholder="Your contact number"
-                                        className="input input-bordered w-full bg-base-100"
+                                        className={inputClass}
                                         {...register("phone", { required: "Phone number is required" })}
                                     />
                                     {errors.phone && <span className="text-error text-sm mt-1">{errors.phone.message}</span>}
@@ -276,8 +285,11 @@ const OrderPage = () => {
 
                         {/* Submit Button */}
                         <div className="form-control mt-8">
-                            <button className="btn btn-primary btn-lg w-full text-black font-bold text-xl shadow-lg hover:shadow-xl transition-all">
-                                Place Order
+                            <button 
+                                disabled={submitting}
+                                className="btn btn-primary btn-lg w-full text-black font-bold text-xl shadow-lg hover:shadow-xl transition-all"
+                            >
+                                {submitting ? <span className="loading loading-spinner"></span> : "Place Order"}
                             </button>
                         </div>
                     </form>

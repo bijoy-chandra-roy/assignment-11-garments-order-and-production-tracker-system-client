@@ -16,16 +16,16 @@ import AdminRoute from "./AdminRoute";
 import ManagerRoute from "./ManagerRoute";
 
 // Dashboard Pages
-import Profile from "../pages/dashboard/common/Profile";
+import Profile from "../pages/common/Profile";
 import DashboardHome from "../pages/dashboard/common/DashboardHome";
 
 // User Pages
-import MyOrders from "../pages/dashboard/user/MyOrders";
-import Payment from "../pages/dashboard/user/Payment";
-import PaymentSuccess from "../pages/dashboard/user/PaymentSuccess";
-import PaymentCancelled from "../pages/dashboard/user/PaymentCancelled";
-import PaymentHistory from "../pages/dashboard/user/PaymentHistory";
-import TrackOrder from "../pages/dashboard/user/TrackOrder";
+import MyOrders from "../pages/dashboard/buyer/MyOrders";
+import Payment from "../pages/dashboard/buyer/Payment";
+import PaymentSuccess from "../pages/dashboard/buyer/PaymentSuccess";
+import PaymentCancelled from "../pages/dashboard/buyer/PaymentCancelled";
+import PaymentHistory from "../pages/dashboard/buyer/PaymentHistory";
+import TrackOrder from "../pages/dashboard/buyer/TrackOrder";
 
 // Manager Pages
 import AddProduct from "../pages/dashboard/manager/AddProduct";
@@ -42,7 +42,7 @@ import AdminAllOrders from "../pages/dashboard/admin/AdminAllOrders";
 // Public Pages
 import AllProducts from "../pages/products/AllProducts";
 import ProductDetails from "../pages/products/ProductDetails";
-import OrderPage from "../pages/Order/OrderPage";
+import OrderPage from "../pages/order/OrderPage";
 import AdminManagerRoute from "./AdminManagerRoute";
 import AdminHome from "../pages/dashboard/admin/AdminHome";
 

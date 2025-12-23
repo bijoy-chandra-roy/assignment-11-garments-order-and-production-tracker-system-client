@@ -1,9 +1,9 @@
 import React from 'react';
-import useAuth from '../../../hooks/useAuth';
-import useRole from '../../../hooks/useRole';
-import useUserInfo from '../../../hooks/useUserInfo';
-import Helmet from '../../../components/common/Helmet';
-import { formatDate } from '../../../utilities/dateFormat';
+import useAuth from '../../hooks/useAuth';
+import useRole from '../../hooks/useRole';
+import useUserInfo from '../../hooks/useUserInfo';
+import Helmet from '../../components/common/Helmet';
+import { formatDate } from '../../utilities/dateFormat';
 
 const Profile = () => {
     const { user, logOut } = useAuth();

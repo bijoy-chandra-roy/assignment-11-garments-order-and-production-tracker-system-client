@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate, useLocation } from 'react-router';
 import Swal from 'sweetalert2';
@@ -22,67 +22,55 @@ const Register = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const axiosPublic = useAxios();
+    const [loading, setLoading] = useState(false);
 
     const from = location.state?.from?.pathname || "/";
 
     const onSubmit = async (data) => {
+        setLoading(true);
         try {
             const imageUrl = await uploadImage(data.image[0]);
 
-            createUser(data.email, data.password)
-                .then(result => {
-                    updateUserProfile(data.name, imageUrl)
-                        .then(() => {
-                            const userInfo = {
-                                name: data.name,
-                                email: data.email,
-                                role: data.role,
-                                image: imageUrl,
-                                status: 'pending'
-                            }
-                            axiosPublic.post('/users', userInfo)
-                                .then(res => {
-                                    if (res.data.insertedId) {
-                                        reset();
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'User created successfully.',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        });
-                                        navigate(from, { replace: true });
-                                    }
-                                })
-                        })
-                        .catch(error => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: error.message,
-                            });
-                        })
-                })
-                .catch(error => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: error.message,
-                    });
-                })
+            await createUser(data.email, data.password);
+            
+            await updateUserProfile(data.name, imageUrl);
+
+            const userInfo = {
+                name: data.name,
+                email: data.email,
+                role: data.role,
+                image: imageUrl,
+                status: 'pending'
+            };
+
+            const res = await axiosPublic.post('/users', userInfo);
+
+            if (res.data.insertedId) {
+                reset();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Registration Successful!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                navigate(from, { replace: true });
+            }
         } catch (error) {
             console.error(error);
             Swal.fire({
                 icon: 'error',
-                title: 'Upload Failed',
-                text: 'Could not upload image.',
+                title: 'Registration Failed',
+                text: error.message,
             });
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="card w-full max-w-md bg-base-200 shadow-2xl border border-base-200">
+        <div className="card w-full max-w-md bg-base-200 shadow-xl border border-base-300">
             <Helmet title="Register" />
-            <div className="card-body">
+            <div className="card-body p-8">
                 <h2 className="text-3xl font-bold text-center mb-2">Sign Up</h2>
                 <p className="text-center text-base-content/60 mb-6">Create your account to get started</p>
 
@@ -90,55 +78,55 @@ const Register = () => {
 
                     <div className="form-control">
                         <label className="label pt-0">
-                            <span className="label-text font-semibold">Full Name</span>
+                            <span className="label-text font-bold">Full Name</span>
                         </label>
                         <input
                             type="text"
                             placeholder="Type your name"
-                            className="input input-bordered w-full"
+                            className="input input-bordered w-full h-11 focus:input-primary"
                             {...register("name", { required: true })}
                         />
                         {errors.name && (isSubmitted || errors.name.type !== 'required') && (
-                            <span className="text-red-500 text-xs mt-1">Name is required</span>
+                            <span className="text-red-500 text-xs mt-1 block">Name is required</span>
                         )}
                     </div>
 
                     <div className="form-control">
                         <label className="label pt-0">
-                            <span className="label-text font-semibold">Email Address</span>
+                            <span className="label-text font-bold">Email Address</span>
                         </label>
                         <input
                             type="email"
                             placeholder="Type your email"
-                            className="input input-bordered w-full"
+                            className="input input-bordered w-full h-11 focus:input-primary"
                             {...register("email", { required: true })}
                         />
                         {errors.email && (isSubmitted || errors.email.type !== 'required') && (
-                            <span className="text-red-500 text-xs mt-1">Email is required</span>
+                            <span className="text-red-500 text-xs mt-1 block">Email is required</span>
                         )}
                     </div>
 
                     <div className="form-control">
                         <label className="label pt-0">
-                            <span className="label-text font-semibold">Profile Picture</span>
+                            <span className="label-text font-bold">Profile Picture</span>
                         </label>
                         <input
                             type="file"
-                            className="file-input file-input-bordered w-full"
+                            className="file-input file-input-bordered file-input-primary w-full h-11 leading-9"
                             accept='image/*'
                             {...register("image", { required: true })}
                         />
                         {errors.image && (isSubmitted || errors.image.type !== 'required') && (
-                            <span className="text-red-500 text-xs mt-1">Image is required</span>
+                            <span className="text-red-500 text-xs mt-1 block">Image is required</span>
                         )}
                     </div>
 
                     <div className="form-control">
                         <label className="label pt-0">
-                            <span className="label-text font-semibold">Role</span>
+                            <span className="label-text font-bold">Role</span>
                         </label>
                         <select
-                            className="select select-bordered w-full"
+                            className="select select-bordered w-full h-11 focus:select-primary"
                             defaultValue="buyer"
                             {...register("role", { required: true })}
                         >
@@ -146,18 +134,18 @@ const Register = () => {
                             <option value="manager">Manager</option>
                         </select>
                         {errors.role && (isSubmitted || errors.role.type !== 'required') && (
-                            <span className="text-red-500 text-xs mt-1">Role is required</span>
+                            <span className="text-red-500 text-xs mt-1 block">Role is required</span>
                         )}
                     </div>
 
                     <div className="form-control">
                         <label className="label pt-0">
-                            <span className="label-text font-semibold">Password</span>
+                            <span className="label-text font-bold">Password</span>
                         </label>
                         <input
                             type="password"
                             placeholder="Enter your password"
-                            className="input input-bordered w-full"
+                            className="input input-bordered w-full h-11 focus:input-primary"
                             {...register("password", {
                                 required: "Password is required",
                                 minLength: {
@@ -172,12 +160,14 @@ const Register = () => {
                         />
                         {errors.password && (
                             (errors.password.type === 'required' && !isSubmitted) ? null :
-                                <span className="text-red-500 text-xs mt-1">{errors.password.message}</span>
+                                <span className="text-red-500 text-xs mt-1 block">{errors.password.message}</span>
                         )}
                     </div>
 
-                    <div className="form-control mt-4">
-                        <button className="btn btn-primary text-lg w-full text-black">Register</button>
+                    <div className="form-control pt-2">
+                        <button disabled={loading} className="btn btn-primary text-lg w-full text-black font-bold">
+                            {loading ? <span className="loading loading-spinner"></span> : "Register"}
+                        </button>
                     </div>
                 </form>
 

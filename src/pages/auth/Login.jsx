@@ -43,59 +43,63 @@ const Login = () => {
             .catch(error => {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Oops...',
+                    title: 'Login Failed',
                     text: error.message,
                 });
             })
     };
 
     return (
-        <div className="card w-full max-w-md bg-base-200 shadow-2xl border border-base-200">
+        <div className="card w-full max-w-md bg-base-200 shadow-xl border border-base-300">
             <Helmet title="Login" />
-            <div className="card-body">
+            <div className="card-body p-8">
                 <h2 className="text-3xl font-bold text-center mb-2">Login</h2>
                 <p className="text-center text-base-content/60 mb-6">Welcome back! Please login to your account.</p>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-
-                    {/* Email Input */}
                     <div className="form-control">
                         <label className="label pt-0">
-                            <span className="label-text font-semibold">Email Address</span>
+                            <span className="label-text font-bold">Email Address</span>
                         </label>
                         <input
                             type="email"
                             placeholder="Type your email"
-                            className="input input-bordered w-full"
+                            className="input input-bordered w-full h-11 focus:input-primary"
                             {...register("email", { required: true })}
                         />
                         {errors.email && (isSubmitted || errors.email.type !== 'required') && (
-                            <span className="text-red-500 text-xs mt-1">Email is required</span>
+                            <span className="text-red-500 text-xs mt-1 block">Email is required</span>
                         )}
                     </div>
 
-                    {/* Password Input */}
                     <div className="form-control">
                         <label className="label pt-0">
-                            <span className="label-text font-semibold">Password</span>
+                            <span className="label-text font-bold">Password</span>
                         </label>
                         <input
                             type="password"
                             placeholder="Enter your password"
-                            className="input input-bordered w-full"
+                            className="input input-bordered w-full h-11 focus:input-primary"
                             {...register("password", { required: true })}
                         />
                         {errors.password && (isSubmitted || errors.password.type !== 'required') && (
-                            <span className="text-red-500 text-xs mt-1">Password is required</span>
+                            <span className="text-red-500 text-xs mt-1 block">Password is required</span>
                         )}
-                        <label className="label">
-                            <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
-                        </label>
+                        
+                        <div className="mt-3">
+                            <a 
+                                href="https://mail.google.com" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="text-sm font-medium link link-hover hover:text-primary transition-colors"
+                            >
+                                Forgot password?
+                            </a>
+                        </div>
                     </div>
 
-                    {/* Submit Button */}
-                    <div className="form-control mt-4">
-                        <button className="btn btn-primary text-lg w-full text-black">Login</button>
+                    <div className="form-control pt-2">
+                        <button className="btn btn-primary text-lg w-full text-black font-bold">Login</button>
                     </div>
                 </form>
 

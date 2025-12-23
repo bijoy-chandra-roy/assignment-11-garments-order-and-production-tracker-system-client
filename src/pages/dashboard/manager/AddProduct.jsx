@@ -15,7 +15,6 @@ const AddProduct = () => {
     const [formKey, setFormKey] = useState(0);
 
     const onSubmit = async (data) => {
-
         if (userInfo.status === 'suspended') {
             Swal.fire({
                 icon: 'error',
@@ -71,11 +70,11 @@ const AddProduct = () => {
     };
 
     return (
-        <div className="w-full p-4">
+        <div className="w-full p-4 md:p-8">
             <Helmet title="Manager | Add Product" />
             <h2 className="text-3xl font-bold mb-8 text-center">Add A New Product</h2>
-            <div className="card bg-base-200 shadow-xl border border-base-300">
-                <div className="card-body">
+            <div className="card bg-base-200 shadow-xl border border-base-300 max-w-4xl mx-auto">
+                <div className="card-body p-8">
                     <ProductForm 
                         key={formKey}
                         onSubmit={onSubmit} 

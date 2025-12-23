@@ -10,9 +10,11 @@ import DashboardTable from '../../../components/dashboard/DashboardTable';
 import Helmet from '../../../components/common/Helmet';
 import { formatDate } from '../../../utilities/dateFormat';
 import OrderDetailsModal from '../../../components/dashboard/OrderDetailsModal';
+import useUserInfo from '../../../hooks/useUserInfo';
 
 const ApprovedOrders = () => {
     const axiosSecure = useAxiosSecure();
+    const { userInfo } = useUserInfo();
     const [selectedOrder, setSelectedOrder] = useState(null);
     const { register, handleSubmit, reset } = useForm();
 
@@ -26,10 +28,31 @@ const ApprovedOrders = () => {
 
     const openTrackingModal = (order) => {
         setSelectedOrder(order);
+        
+        reset({
+            status: order.status,
+            location: order.location || '', 
+            note: order.note || ''
+        });
         document.getElementById('tracking_modal').showModal();
     };
 
+    const closeTrackingModal = () => {
+        document.getElementById('tracking_modal').close();
+        reset(); 
+        setSelectedOrder(null);
+    };
+
     const onSubmit = (data) => {
+        if (userInfo.status === 'suspended') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Access Denied',
+                text: 'Your account is suspended. You cannot update tracking information.',
+            });
+            return;
+        }
+
         const trackingData = {
             ...data,
             date: new Date()
@@ -39,15 +62,14 @@ const ApprovedOrders = () => {
             .then(res => {
                 if (res.data.modifiedCount > 0) {
                     refetch();
-                    reset();
-                    document.getElementById('tracking_modal').close();
                     Swal.fire({
                         title: "Updated!",
-                        text: "Tracking information added successfully.",
+                        text: "Tracking information updated.",
                         icon: "success",
                         timer: 1500,
                         showConfirmButton: false
                     });
+                    closeTrackingModal();
                 }
             })
             .catch(err => {
@@ -61,6 +83,11 @@ const ApprovedOrders = () => {
     };
 
     if (isLoading) return <Loading />;
+
+    const inputClass = "input input-bordered w-full h-11 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary";
+    const selectClass = "select select-bordered w-full h-11 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary";
+    const textareaClass = "textarea textarea-bordered h-24 w-full focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-base";
+    const labelClass = "label-text font-bold mb-1 block";
 
     return (
         <>
@@ -147,62 +174,78 @@ const ApprovedOrders = () => {
             />
 
             <dialog id="tracking_modal" className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg mb-4">Update Production Status</h3>
-                    <p className="text-sm text-gray-500 mb-4">Order ID: {selectedOrder?._id}</p>
+                <div className="modal-box max-w-2xl border border-base-300">
+                    <h3 className="font-bold text-2xl mb-1 text-center">Update Production Status</h3>
+                    <p className="text-sm text-center text-base-content/60 mb-8 font-mono">
+                        Order ID: {selectedOrder?._id}
+                    </p>
                     
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-semibold">Stage</span>
-                            </label>
-                            <select 
-                                {...register("status", { required: true })}
-                                className="select select-bordered w-full"
-                            >
-                                <option value="Cutting Completed">Cutting Completed</option>
-                                <option value="Sewing Started">Sewing Started</option>
-                                <option value="Finishing">Finishing</option>
-                                <option value="QC Checked">QC Checked</option>
-                                <option value="Packed">Packed</option>
-                                <option value="Shipped">Shipped</option>
-                                <option value="Out for Delivery">Out for Delivery</option>
-                                <option value="Delivered">Delivered</option>
-                            </select>
-                        </div>
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="form-control">
+                                <label className="label pt-0">
+                                    <span className={labelClass}>Production Stage</span>
+                                </label>
+                                <select 
+                                    {...register("status", { required: true })}
+                                    className={selectClass}
+                                >
+                                    <option value="Approved">Approved (Pending Start)</option>
+                                    <option value="Cutting Completed">Cutting Completed</option>
+                                    <option value="Sewing Started">Sewing Started</option>
+                                    <option value="Finishing">Finishing</option>
+                                    <option value="QC Checked">QC Checked</option>
+                                    <option value="Packed">Packed</option>
+                                    <option value="Shipped">Shipped</option>
+                                    <option value="Out for Delivery">Out for Delivery</option>
+                                    <option value="Delivered">Delivered</option>
+                                </select>
+                            </div>
 
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-semibold">Current Location</span>
-                            </label>
-                            <div className="relative">
-                                <FaMapMarkerAlt className="absolute left-3 top-4 text-gray-400" />
-                                <input 
-                                    type="text" 
-                                    placeholder="e.g. Sewing Section B, Warehouse" 
-                                    {...register("location", { required: true })}
-                                    className="input input-bordered w-full pl-10" 
-                                />
+                            <div className="form-control">
+                                <label className="label pt-0">
+                                    <span className={labelClass}>Current Location</span>
+                                </label>
+                                <div className="relative">
+                                    <FaMapMarkerAlt className="absolute left-3 top-3.5 text-primary/70 z-10" />
+                                    <input 
+                                        type="text" 
+                                        placeholder="e.g. Sewing Section B" 
+                                        {...register("location", { required: true })}
+                                        className={`${inputClass} pl-10`} 
+                                    />
+                                </div>
                             </div>
                         </div>
 
                         <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-semibold">Note (Optional)</span>
+                            <label className="label pt-0">
+                                <span className={labelClass}>Note (Optional)</span>
                             </label>
                             <textarea 
                                 {...register("note")}
-                                className="textarea textarea-bordered h-24" 
-                                placeholder="Any additional details..."
+                                className={textareaClass} 
+                                placeholder="Any additional details regarding this update..."
                             ></textarea>
                         </div>
 
-                        <div className="modal-action">
-                            <button type="button" className="btn" onClick={() => document.getElementById('tracking_modal').close()}>Cancel</button>
-                            <button type="submit" className="btn btn-primary text-black">Update Status</button>
+                        <div className="modal-action mt-8">
+                            <button 
+                                type="button" 
+                                className="btn btn-ghost hover:bg-base-300" 
+                                onClick={closeTrackingModal}
+                            >
+                                Cancel
+                            </button>
+                            <button type="submit" className="btn btn-primary text-black font-bold px-8">
+                                Update Status
+                            </button>
                         </div>
                     </form>
                 </div>
+                <form method="dialog" className="modal-backdrop">
+                    <button onClick={closeTrackingModal}>close</button>
+                </form>
             </dialog>
         </>
     );
