@@ -52,84 +52,93 @@ const AdminHome = () => {
             <h2 className="text-3xl font-bold mb-6">Admin Overview</h2>
             <p className="text-gray-500 mb-8">Welcome back, {user?.displayName}</p>
             
-            {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <div className="stat bg-base-200 text-secondary rounded-2xl shadow-lg border border-base-200">
-                    <div className="stat-figure text-primary">
+                <div className="bg-base-200 text-secondary rounded-2xl shadow-lg border border-base-200 p-6 grid grid-cols-[1fr_auto] items-center">
+                    <div>
+                        <div className="font-bold text-gray-500 mb-1">Revenue</div>
+                        <div className="text-3xl font-bold text-primary">${stats.revenue}</div>
+                    </div>
+                    <div className="text-primary">
                         <FaDollarSign className="text-4xl" />
                     </div>
-                    <div className="stat-title font-bold text-gray-500">Revenue</div>
-                    <div className="stat-value text-primary">${stats.revenue}</div>
                 </div>
 
-                <div className="stat bg-base-200 text-secondary rounded-2xl shadow-lg border border-base-200">
-                    <div className="stat-figure text-secondary">
+                <div className="bg-base-200 text-secondary rounded-2xl shadow-lg border border-base-200 p-6 grid grid-cols-[1fr_auto] items-center">
+                    <div>
+                        <div className="font-bold text-gray-500 mb-1">Users</div>
+                        <div className="text-3xl font-bold text-secondary">{stats.users}</div>
+                    </div>
+                    <div className="text-secondary">
                         <FaUsers className="text-4xl" />
                     </div>
-                    <div className="stat-title font-bold text-gray-500">Users</div>
-                    <div className="stat-value text-secondary">{stats.users}</div>
                 </div>
 
-                <div className="stat bg-base-200 text-secondary rounded-2xl shadow-lg border border-base-200">
-                    <div className="stat-figure text-accent">
+                <div className="bg-base-200 text-secondary rounded-2xl shadow-lg border border-base-200 p-6 grid grid-cols-[1fr_auto] items-center">
+                    <div>
+                        <div className="font-bold text-gray-500 mb-1">Products</div>
+                        <div className="text-3xl font-bold text-accent">{stats.products}</div>
+                    </div>
+                    <div className="text-accent">
                         <FaBoxOpen className="text-4xl" />
                     </div>
-                    <div className="stat-title font-bold text-gray-500">Products</div>
-                    <div className="stat-value text-accent">{stats.products}</div>
                 </div>
 
-                <div className="stat bg-base-200 text-secondary rounded-2xl shadow-lg border border-base-200">
-                    <div className="stat-figure text-warning">
+                <div className="bg-base-200 text-secondary rounded-2xl shadow-lg border border-base-200 p-6 grid grid-cols-[1fr_auto] items-center">
+                    <div>
+                        <div className="font-bold text-gray-500 mb-1">Orders</div>
+                        <div className="text-3xl font-bold text-warning">{stats.orders}</div>
+                    </div>
+                    <div className="text-warning">
                         <FaClipboardList className="text-4xl" />
                     </div>
-                    <div className="stat-title font-bold text-gray-500">Orders</div>
-                    <div className="stat-value text-warning">{stats.orders}</div>
                 </div>
             </div>
 
-            {/* Charts Section */}
             <div className="flex flex-col lg:flex-row gap-8">
-                {/* Bar Chart */}
-                <div className="w-full lg:w-1/2 h-[400px] bg-base-200 p-6 rounded-2xl shadow-xl border border-base-200">
+
+                <div className="w-full lg:flex-1 min-w-0 h-[400px] bg-base-200 p-4 rounded-2xl shadow-xl border border-base-200 flex flex-col">
                     <h3 className="text-xl font-bold mb-6 text-center">System Activity</h3>
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={barData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Bar dataKey="count" fill="#8884d8" barSize={50} radius={[10, 10, 0, 0]}>
-                                {barData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % 20]} />
-                                ))}
-                            </Bar>
-                        </BarChart>
-                    </ResponsiveContainer>
+                    <div className="flex-1 w-full min-h-0">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={barData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="name" />
+                                <YAxis />
+                                <Tooltip />
+                                <Bar dataKey="count" fill="#8884d8" barSize={30} radius={[10, 10, 0, 0]}>
+                                    {barData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % 20]} />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
 
-                {/* Pie Chart */}
-                <div className="w-full lg:w-1/2 h-[400px] bg-base-200 p-6 rounded-2xl shadow-xl border border-base-200">
+                <div className="w-full lg:flex-1 min-w-0 h-[400px] bg-base-200 p-4 rounded-2xl shadow-xl border border-base-200 flex flex-col">
                     <h3 className="text-xl font-bold mb-6 text-center">Data Distribution</h3>
-                    <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                            <Pie
-                                data={pieData}
-                                cx="50%"
-                                cy="50%"
-                                labelLine={false}
-                                label={renderCustomizedLabel}
-                                outerRadius={120}
-                                fill="#8884d8"
-                                dataKey="value"
-                            >
-                                {pieData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                ))}
-                            </Pie>
-                            <Legend />
-                            <Tooltip />
-                        </PieChart>
-                    </ResponsiveContainer>
+                    <div className="flex-1 w-full min-h-0">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={pieData}
+                                    cx="50%"
+                                    cy="50%"
+                                    labelLine={false}
+                                    label={renderCustomizedLabel}
+                                    outerRadius="80%" 
+                                    fill="#8884d8"
+                                    dataKey="value"
+                                >
+                                    {pieData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                <Legend />
+                                <Tooltip />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
             </div>
         </div>
