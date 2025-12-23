@@ -6,6 +6,7 @@ import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
 import DashboardTable from '../../../components/dashboard/DashboardTable';
 import useUserInfo from '../../../hooks/useUserInfo';
+import Helmet from '../../../components/common/Helmet';
 
 const PendingOrders = () => {
     const axiosSecure = useAxiosSecure();
@@ -65,6 +66,7 @@ const PendingOrders = () => {
 
     return (
         <DashboardTable title="Pending Orders">
+            <Helmet title="Manager | Pending Orders" />
             <thead className="bg-base-200">
                 <tr>
                     <th>Order ID</th>

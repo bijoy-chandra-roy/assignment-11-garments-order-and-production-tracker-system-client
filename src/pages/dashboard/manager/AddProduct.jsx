@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { uploadImage } from '../../../utilities/imageUpload';
 import ProductForm from '../../../components/products/ProductForm';
 import useUserInfo from '../../../hooks/useUserInfo';
+import Helmet from '../../../components/common/Helmet';
 
 const AddProduct = () => {
     const { user } = useAuth();
@@ -71,6 +72,7 @@ const AddProduct = () => {
 
     return (
         <div className="w-full p-4">
+            <Helmet title="Manager | Add Product" />
             <h2 className="text-3xl font-bold mb-8 text-center">Add A New Product</h2>
             <div className="card bg-base-200 shadow-xl border border-base-300">
                 <div className="card-body">

@@ -10,6 +10,7 @@ import Loading from '../../../components/common/Loading';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import Helmet from '../../../components/common/Helmet';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -39,6 +40,7 @@ const TrackOrder = () => {
 
     return (
         <div className="space-y-8">
+            <Helmet title="Track Order" />
             <h2 className="text-3xl font-bold text-center">Order Tracking</h2>
 
             {/* Order Info Summary */}

@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
 import DashboardTable from '../../../components/dashboard/DashboardTable';
+import Helmet from '../../../components/common/Helmet';
 
 const ApprovedOrders = () => {
     const axiosSecure = useAxiosSecure();
@@ -62,6 +63,7 @@ const ApprovedOrders = () => {
     return (
         <>
             <DashboardTable title="Approved Orders (Production)">
+                <Helmet title="Manager | Approved Orders" />
                 <thead className="bg-base-200">
                     <tr>
                         <th>Order ID</th>

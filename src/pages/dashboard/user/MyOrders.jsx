@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { Link } from 'react-router';
 import DashboardTable from '../../../components/dashboard/DashboardTable';
 import { FaEye, FaTrash } from 'react-icons/fa';
+import Helmet from '../../../components/common/Helmet';
 
 const MyOrders = () => {
     const { user } = useAuth();
@@ -58,7 +59,7 @@ const MyOrders = () => {
 
     return (
         <DashboardTable title="My Orders">
-            {/* Requirement: | Order ID | Product | Quantity | Status | Payment | Actions | */}
+            <Helmet title="My Orders" />
             <thead className="bg-base-200">
                 <tr>
                     <th>Order ID</th>

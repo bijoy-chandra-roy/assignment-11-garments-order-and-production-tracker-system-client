@@ -6,10 +6,12 @@ import FactoryMap from '../../components/home/FactoryMap';
 import HowItWorks from '../../components/home/HowItWorks';
 import OurProducts from '../../components/home/OurProducts';
 import Faq from '../../components/home/Faq';
+import Helmet from '../../components/common/Helmet';
 
 const HomePage = () => {
     return (
         <div>
+            <Helmet title="Home" />
             <Banner/>
             <OurProducts/>
             <HowItWorks/>

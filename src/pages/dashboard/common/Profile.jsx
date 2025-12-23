@@ -2,6 +2,7 @@ import React from 'react';
 import useAuth from '../../../hooks/useAuth';
 import useRole from '../../../hooks/useRole';
 import useUserInfo from '../../../hooks/useUserInfo';
+import Helmet from '../../../components/common/Helmet';
 
 const Profile = () => {
     const { user, logOut } = useAuth();
@@ -18,6 +19,7 @@ const Profile = () => {
 
     return (
         <div className="flex flex-col items-center justify-center py-16">
+            <Helmet title="My Profile" />
             <div className="card w-96 bg-base-200 shadow-2xl border border-base-200">
                 <div className="card-body items-center text-center">
                     <div className="avatar mb-4">

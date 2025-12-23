@@ -6,6 +6,7 @@ import useAuth from '../../hooks/useAuth';
 import useAxios from '../../hooks/useAxios';
 import { uploadImage } from '../../utilities/imageUpload';
 import SocialLogin from '../../components/auth/SocialLogin';
+import Helmet from '../../components/common/Helmet';
 
 const Register = () => {
     const {
@@ -80,6 +81,7 @@ const Register = () => {
 
     return (
         <div className="card w-full max-w-md bg-base-200 shadow-2xl border border-base-200">
+            <Helmet title="Register" />
             <div className="card-body">
                 <h2 className="text-3xl font-bold text-center mb-2">Sign Up</h2>
                 <p className="text-center text-base-content/60 mb-6">Create your account to get started</p>

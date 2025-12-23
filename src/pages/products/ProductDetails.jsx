@@ -6,6 +6,7 @@ import useAuth from '../../hooks/useAuth';
 import useRole from '../../hooks/useRole';
 import useAxios from '../../hooks/useAxios';
 import { FaStar, FaBoxOpen, FaTag, FaDollarSign, FaMoneyBillWave, FaPlayCircle } from 'react-icons/fa';
+import Helmet from '../../components/common/Helmet';
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -31,6 +32,7 @@ const ProductDetails = () => {
 
     return (
         <div className="max-w-7xl min-h-screen mx-auto px-4 py-12 bg-base-100">
+            <Helmet title={product?.name || "Product Details"} />
             <div className="flex flex-col lg:flex-row gap-12">
                 {/* Image Section */}
                 <div className="flex-1">

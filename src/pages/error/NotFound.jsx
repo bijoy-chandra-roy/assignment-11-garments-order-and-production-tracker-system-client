@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router';
 import { FaHome, FaExclamationTriangle } from 'react-icons/fa';
+import Helmet from '../../components/common/Helmet';
 
 const NotFound = () => {
     return (
         <div className="min-h-screen flex flex-col justify-center items-center bg-base-200 text-center px-4 font-urbanist">
+            <Helmet title="404 Not Found" />
             <FaExclamationTriangle className="text-6xl text-warning mb-4" />
             <h1 className="text-9xl font-black text-primary">404</h1>
             <h2 className="text-4xl font-bold mt-4 mb-8 text-base-content">Page Not Found</h2>

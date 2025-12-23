@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import useAxios from '../../hooks/useAxios';
 import useUserInfo from '../../hooks/useUserInfo';
+import Helmet from '../../components/common/Helmet';
 
 const OrderPage = () => {
     const { id } = useParams();
@@ -97,6 +98,7 @@ const OrderPage = () => {
 
     return (
         <div className="max-w-4xl min-h-screen mx-auto px-4 py-12 font-urbanist">
+            <Helmet title="Place Order" />
             <h2 className="text-4xl font-bold text-center mb-8">Confirm Your Order</h2>
             
             <div className="card bg-base-200 shadow-2xl border border-base-300">

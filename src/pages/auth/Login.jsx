@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import useAuth from '../../hooks/useAuth';
 import Swal from 'sweetalert2';
 import SocialLogin from '../../components/auth/SocialLogin';
+import Helmet from '../../components/common/Helmet';
 
 const Login = () => {
     const {
@@ -50,6 +51,7 @@ const Login = () => {
 
     return (
         <div className="card w-full max-w-md bg-base-200 shadow-2xl border border-base-200">
+            <Helmet title="Login" />
             <div className="card-body">
                 <h2 className="text-3xl font-bold text-center mb-2">Login</h2>
                 <p className="text-center text-base-content/60 mb-6">Welcome back! Please login to your account.</p>

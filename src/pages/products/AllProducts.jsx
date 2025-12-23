@@ -4,6 +4,7 @@ import ProductCard from '../../components/products/ProductCard';
 import Loading from '../../components/common/Loading';
 import useAxios from '../../hooks/useAxios';
 import { FaSearch } from 'react-icons/fa';
+import Helmet from '../../components/common/Helmet';
 
 const AllProducts = () => {
     const axiosPublic = useAxios();
@@ -43,6 +44,7 @@ const AllProducts = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-12">
+            <Helmet title="Our Collection" />
             <div className="text-center mb-8">
                 <h2 className="text-4xl font-bold mb-4">Our Collection</h2>
                 <p className="max-w-2xl mx-auto text-base-content/70 mb-8">

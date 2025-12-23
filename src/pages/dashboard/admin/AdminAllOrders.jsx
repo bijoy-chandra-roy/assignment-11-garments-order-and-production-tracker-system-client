@@ -5,6 +5,7 @@ import { FaEye } from 'react-icons/fa';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
 import DashboardTable from '../../../components/dashboard/DashboardTable';
+import Helmet from '../../../components/common/Helmet';
 
 const AdminAllOrders = () => {
     const axiosSecure = useAxiosSecure();
@@ -41,6 +42,7 @@ const AdminAllOrders = () => {
                 </select>
             }
         >
+            <Helmet title="Admin | All Orders" />
             <thead className="bg-base-200">
                 <tr>
                     <th>Order ID</th>

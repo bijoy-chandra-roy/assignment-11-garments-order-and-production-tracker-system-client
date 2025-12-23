@@ -1,8 +1,10 @@
 import React from 'react';
+import Helmet from '../../components/common/Helmet';
 
 const About = () => {
     return (
         <div className="max-w-7xl mx-auto px-4 py-16 text-center">
+            <Helmet title="About Us" />
             <h1 className="text-5xl font-bold mb-8">About Haystack</h1>
             <p className="max-w-3xl mx-auto text-lg text-base-content/80 leading-relaxed mb-12">
                 Haystack is a cutting-edge Garment Production Tracker System designed to bridge the gap between buyers and factories. 

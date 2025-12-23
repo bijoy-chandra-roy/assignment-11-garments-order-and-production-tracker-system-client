@@ -3,6 +3,7 @@ import { useParams } from 'react-router';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../../../components/common/Loading';
+import Helmet from '../../../components/common/Helmet';
 
 const Payment = () => {
     const { id } = useParams();
@@ -30,6 +31,7 @@ const Payment = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            <Helmet title="Payment" />
             <div className="card w-96 bg-base-200 shadow-xl border border-base-200">
                 <div className="card-body text-center">
                     <h2 className="card-title justify-center">Complete Payment</h2>

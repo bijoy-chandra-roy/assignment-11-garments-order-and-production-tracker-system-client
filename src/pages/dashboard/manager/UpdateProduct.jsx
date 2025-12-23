@@ -7,6 +7,7 @@ import Loading from '../../../components/common/Loading';
 import { uploadImage } from '../../../utilities/imageUpload';
 import ProductForm from '../../../components/products/ProductForm';
 import useRole from '../../../hooks/useRole';
+import Helmet from '../../../components/common/Helmet';
 
 const UpdateProduct = () => {
     const { id } = useParams();
@@ -83,6 +84,7 @@ const UpdateProduct = () => {
 
     return (
         <div className="w-full p-4 max-w-4xl mx-auto">
+            <Helmet title="Manager | Update Product" />
             <h2 className="text-3xl font-bold mb-8 text-center">Update Product</h2>
             <div className="card bg-base-200 shadow-xl border border-base-300">
                 <div className="card-body">

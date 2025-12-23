@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router';
 import { FaBan } from 'react-icons/fa';
+import Helmet from '../../components/common/Helmet';
 
 const Forbidden = () => {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
+            <Helmet title="403 Forbidden" />
             <FaBan className="text-9xl text-error mb-6 opacity-80" />
             <h1 className="text-4xl font-bold text-error mb-2">Access Forbidden</h1>
             <p className="text-lg text-base-content/70 mb-8 max-w-md">

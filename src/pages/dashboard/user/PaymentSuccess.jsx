@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
 import Swal from 'sweetalert2';
+import Helmet from '../../../components/common/Helmet';
 
 const PaymentSuccess = () => {
     const [searchParams] = useSearchParams();
@@ -40,6 +41,7 @@ const PaymentSuccess = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+            <Helmet title="Payment Successful" />
             <h2 className="text-3xl font-bold text-success mb-4">Payment Successful!</h2>
             <p>We are updating your order status...</p>
         </div>

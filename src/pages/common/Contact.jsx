@@ -1,9 +1,11 @@
 import React from 'react';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import Helmet from './../../components/common/Helmet';
 
 const Contact = () => {
     return (
         <div className="max-w-6xl mx-auto px-4 py-16">
+            <Helmet title="Contact Us" />
             <h1 className="text-4xl font-bold text-center mb-12">Get in Touch</h1>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
