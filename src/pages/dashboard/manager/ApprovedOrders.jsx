@@ -8,6 +8,7 @@ import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
 import DashboardTable from '../../../components/dashboard/DashboardTable';
 import Helmet from '../../../components/common/Helmet';
+import { formatDate } from '../../../utilities/dateFormat';
 
 const ApprovedOrders = () => {
     const axiosSecure = useAxiosSecure();
@@ -99,7 +100,7 @@ const ApprovedOrders = () => {
                                     </div>
                                 </td>
                                 <td>{order.quantity}</td>
-                                <td>{order.approvedAt ? new Date(order.approvedAt).toLocaleDateString() : 'N/A'}</td>
+                                <td>{formatDate(order.approvedAt)}</td>
                                 <td>
                                     <span className="badge badge-info badge-outline font-bold">
                                         {order.status}

@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import Loading from '../../../components/common/Loading';
 import DashboardTable from '../../../components/dashboard/DashboardTable';
 import Helmet from '../../../components/common/Helmet';
+import { formatDate } from '../../../utilities/dateFormat';
 
 const PaymentHistory = () => {
     const { user } = useAuth();
@@ -60,7 +61,7 @@ const PaymentHistory = () => {
                             <td>{payment.quantity}</td>
                             <td>${payment.amount}</td>
                             <td className="font-mono text-xs">{payment.transactionId}</td>
-                            <td>{new Date(payment.date).toLocaleDateString()}</td>
+                            <td>{formatDate(payment.date)}</td>
                             <td>
                                 <span className="badge badge-success badge-outline font-bold">
                                     {payment.status}

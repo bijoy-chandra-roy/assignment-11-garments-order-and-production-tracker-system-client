@@ -11,6 +11,7 @@ import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import Helmet from '../../../components/common/Helmet';
+import { formatDate } from '../../../utilities/dateFormat';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -104,7 +105,7 @@ const TrackOrder = () => {
 
                                             <div className={`timeline-end mb-10 ${isLatest ? 'font-bold text-secondary scale-105 origin-left' : ''}`}>
                                                 <time className="font-mono italic text-xs opacity-70">
-                                                    {new Date(step.date).toLocaleString()}
+                                                    {formatDate(step.date)}
                                                 </time>
                                                 <div className="text-lg font-black">{step.status}</div>
                                                 <p className="text-sm font-semibold text-gray-600">Location: {step.location}</p>

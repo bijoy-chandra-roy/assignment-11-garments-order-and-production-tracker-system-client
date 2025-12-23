@@ -3,6 +3,7 @@ import useAuth from '../../../hooks/useAuth';
 import useRole from '../../../hooks/useRole';
 import useUserInfo from '../../../hooks/useUserInfo';
 import Helmet from '../../../components/common/Helmet';
+import { formatDate } from '../../../utilities/dateFormat';
 
 const Profile = () => {
     const { user, logOut } = useAuth();
@@ -50,7 +51,9 @@ const Profile = () => {
                     <div className="w-full space-y-2 text-left mb-6">
                         <div className="flex justify-between">
                             <span className="font-semibold">Last Login:</span>
-                            <span className="text-sm opacity-70">{user?.metadata?.lastSignInTime ? new Date(user.metadata.lastSignInTime).toLocaleDateString() : 'N/A'}</span>
+                            <span className="text-sm opacity-70">
+                                {formatDate(user?.metadata?.lastSignInTime)}
+                            </span>
                         </div>
                     </div>
 

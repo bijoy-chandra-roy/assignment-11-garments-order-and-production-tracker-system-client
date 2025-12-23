@@ -7,6 +7,7 @@ import Loading from '../../../components/common/Loading';
 import DashboardTable from '../../../components/dashboard/DashboardTable';
 import useUserInfo from '../../../hooks/useUserInfo';
 import Helmet from '../../../components/common/Helmet';
+import { formatDate } from '../../../utilities/dateFormat';
 
 const PendingOrders = () => {
     const axiosSecure = useAxiosSecure();
@@ -100,7 +101,7 @@ const PendingOrders = () => {
                                 </div>
                             </td>
                             <td>{order.quantity}</td>
-                            <td>{new Date(order.orderDate).toLocaleDateString()}</td>
+                            <td>{formatDate(order.orderDate)}</td>
                             <td className="flex gap-2">
                                 <button 
                                     onClick={() => handleStatusUpdate(order._id, 'Approved')}
