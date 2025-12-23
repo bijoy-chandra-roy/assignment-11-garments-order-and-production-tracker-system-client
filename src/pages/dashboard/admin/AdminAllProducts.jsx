@@ -19,19 +19,30 @@ const AdminAllProducts = () => {
     });
 
     const handleToggleHome = (product) => {
-        axiosSecure.patch(`/products/${product._id}`, { showOnHome: !product.showOnHome })
-            .then(res => {
-                if(res.data.modifiedCount > 0){
-                    refetch();
-                    Swal.fire({
-                        icon: "success",
-                        title: `Home page visibility updated`,
-                        showConfirmButton: false,
-                        timer: 1000
-                    });
-                }
-            })
-    };
+    const currentlyFeatured = products.filter(p => p.showOnHome).length;
+
+    if (!product.showOnHome && currentlyFeatured >= 6) {
+        Swal.fire({
+            icon: "warning",
+            title: "Limit Reached",
+            text: "You can only feature up to 6 products on the home page.",
+        });
+        return;
+    }
+
+    axiosSecure.patch(`/products/${product._id}`, { showOnHome: !product.showOnHome })
+        .then(res => {
+            if(res.data.modifiedCount > 0){
+                refetch();
+                Swal.fire({
+                    icon: "success",
+                    title: `Home page visibility updated`,
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+            }
+        });
+};
 
     const handleDelete = (id) => {
         Swal.fire({
