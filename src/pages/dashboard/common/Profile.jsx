@@ -49,10 +49,6 @@ const Profile = () => {
 
                     <div className="w-full space-y-2 text-left mb-6">
                         <div className="flex justify-between">
-                            <span className="font-semibold">User ID:</span>
-                            <span className="text-xs opacity-50 font-mono self-center">...{user?.uid.slice(-6)}</span>
-                        </div>
-                        <div className="flex justify-between">
                             <span className="font-semibold">Last Login:</span>
                             <span className="text-sm opacity-70">{user?.metadata?.lastSignInTime ? new Date(user.metadata.lastSignInTime).toLocaleDateString() : 'N/A'}</span>
                         </div>
