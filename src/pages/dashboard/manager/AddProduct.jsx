@@ -26,6 +26,30 @@ const AddProduct = () => {
         
         setLoading(true);
         try {
+             if (data.showOnHome) {
+
+                const res = await axiosSecure.get('/products?showOnHome=true');
+
+                if (res.data.count >= 6) {
+
+                    setLoading(false);
+
+                    Swal.fire({
+
+                        icon: "warning",
+
+                        title: "Limit Reached",
+
+                        text: "You can only feature up to 6 products on the home page.",
+
+                    });
+
+                    return;
+
+                }
+
+            }
+            
             const imageUrl = await uploadImage(data.image[0]);
 
             const productItem = {

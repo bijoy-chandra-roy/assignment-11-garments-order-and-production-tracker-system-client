@@ -17,7 +17,7 @@ const UpdateProduct = () => {
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
     const [productData, setProductData] = useState(null);
-    const { role } = useRole(); 
+    const { role } = useRole();
 
     useEffect(() => {
         axiosPublic.get(`/products/${id}`)
@@ -34,9 +34,34 @@ const UpdateProduct = () => {
 
     const onSubmit = async (data) => {
         setUploading(true);
-        let imageUrl = productData.image; 
 
         try {
+            if (data.showOnHome && !productData.showOnHome) {
+
+                const res = await axiosSecure.get('/products?showOnHome=true');
+
+                if (res.data.count >= 6) {
+
+                    setUploading(false);
+
+                    Swal.fire({
+
+                        icon: "warning",
+
+                        title: "Limit Reached",
+
+                        text: "You can only feature up to 6 products on the home page.",
+
+                    });
+
+                    return;
+
+                }
+
+            }
+
+            let imageUrl = productData.image;
+
             if (data.image && typeof data.image !== 'string' && data.image.length > 0) {
                 imageUrl = await uploadImage(data.image[0]);
             }
@@ -48,7 +73,7 @@ const UpdateProduct = () => {
                 price: parseFloat(data.price),
                 quantity: parseInt(data.quantity),
                 minimumOrder: parseInt(data.minimumOrder),
-                image: imageUrl, 
+                image: imageUrl,
                 video: data.video || '',
                 paymentMethod: data.paymentMethod,
                 showOnHome: data.showOnHome === true
@@ -63,7 +88,7 @@ const UpdateProduct = () => {
                     showConfirmButton: false,
                     timer: 1500
                 });
-                
+
                 if (role === 'admin') {
                     navigate('/dashboard/all-products');
                 } else {
@@ -88,11 +113,11 @@ const UpdateProduct = () => {
             <h2 className="text-3xl font-bold mb-8 text-center">Update Product</h2>
             <div className="card bg-base-200 shadow-xl border border-base-300">
                 <div className="card-body">
-                    <ProductForm 
-                        onSubmit={onSubmit} 
-                        defaultValues={productData} 
-                        isUpdate={true} 
-                        loading={uploading} 
+                    <ProductForm
+                        onSubmit={onSubmit}
+                        defaultValues={productData}
+                        isUpdate={true}
+                        loading={uploading}
                     />
                 </div>
             </div>
