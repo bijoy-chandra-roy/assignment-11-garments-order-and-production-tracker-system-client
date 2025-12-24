@@ -8,6 +8,7 @@ import { uploadImage } from '../../../utilities/imageUpload';
 import ProductForm from '../../../components/products/ProductForm';
 import useRole from '../../../hooks/useRole';
 import Helmet from '../../../components/common/Helmet';
+import useUserInfo from '../../../hooks/useUserInfo';
 
 const UpdateProduct = () => {
     const { id } = useParams();
@@ -18,6 +19,7 @@ const UpdateProduct = () => {
     const [uploading, setUploading] = useState(false);
     const [productData, setProductData] = useState(null);
     const { role } = useRole();
+    const { userInfo } = useUserInfo();
 
     useEffect(() => {
         axiosPublic.get(`/products/${id}`)
@@ -31,6 +33,16 @@ const UpdateProduct = () => {
                 Swal.fire("Error", "Could not load product data", "error");
             });
     }, [id, axiosPublic]);
+
+    if (userInfo.status === 'suspended') {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+                <Helmet title="Access Restricted" />
+                <h2 className="text-3xl font-bold text-error mb-2">Access Restricted</h2>
+                <p className="text-gray-500">Your account is suspended. You cannot update products.</p>
+            </div>
+        );
+    }
 
     const onSubmit = async (data) => {
         setUploading(true);

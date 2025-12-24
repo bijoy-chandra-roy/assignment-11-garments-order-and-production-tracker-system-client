@@ -14,6 +14,16 @@ const AddProduct = () => {
     const [loading, setLoading] = useState(false);
     const [formKey, setFormKey] = useState(0);
 
+    if (userInfo.status === 'suspended') {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+                <Helmet title="Access Restricted" />
+                <h2 className="text-3xl font-bold text-error mb-2">Access Restricted</h2>
+                <p className="text-gray-500">Your account is suspended. You cannot add new products.</p>
+            </div>
+        );
+    }
+
     const onSubmit = async (data) => {
         if (userInfo.status === 'suspended') {
             Swal.fire({

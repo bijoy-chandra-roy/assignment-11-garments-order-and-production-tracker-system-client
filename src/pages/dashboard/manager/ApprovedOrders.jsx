@@ -138,8 +138,9 @@ const ApprovedOrders = () => {
                                     <div className="flex gap-2">
                                         <button 
                                             onClick={() => openTrackingModal(order)}
-                                            className="btn btn-sm btn-primary text-black"
-                                            title="Add Tracking Update"
+                                            disabled={userInfo.status === 'suspended'}
+                                            className="btn btn-sm btn-primary text-black disabled:bg-gray-200 disabled:text-gray-400 disabled:border-gray-200"
+                                            title={userInfo.status === 'suspended' ? "Account Suspended" : "Add Tracking Update"}
                                         >
                                             <FaTruck />
                                         </button>

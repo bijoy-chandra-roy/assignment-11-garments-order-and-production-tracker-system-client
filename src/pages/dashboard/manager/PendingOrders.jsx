@@ -135,16 +135,17 @@ const PendingOrders = () => {
 
                                         <button 
                                             onClick={() => handleStatusUpdate(order._id, 'Approved')}
-                                            disabled={isApprovalDisabled}
+                                            disabled={isApprovalDisabled || userInfo.status === 'suspended'}
                                             className="btn btn-sm btn-circle btn-success text-white disabled:bg-gray-300 disabled:text-gray-500"
-                                            title={isApprovalDisabled ? "Payment Required" : "Approve"}
+                                            title={userInfo.status === 'suspended' ? "Account Suspended" : (isApprovalDisabled ? "Payment Required" : "Approve")}
                                         >
                                             <FaCheck />
                                         </button>
                                         <button 
                                             onClick={() => handleStatusUpdate(order._id, 'Rejected')}
-                                            className="btn btn-sm btn-circle btn-error text-white"
-                                            title="Reject"
+                                            disabled={userInfo.status === 'suspended'}
+                                            className="btn btn-sm btn-circle btn-error text-white disabled:bg-gray-300 disabled:text-gray-500"
+                                            title={userInfo.status === 'suspended' ? "Account Suspended" : "Reject"}
                                         >
                                             <FaTimes />
                                         </button>

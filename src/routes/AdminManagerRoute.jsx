@@ -14,7 +14,7 @@ const AdminManagerRoute = ({ children }) => {
         return children;
     }
     
-    if (role === 'manager' && userInfo.status === 'active') {
+    if (role === 'manager') {
         return children;
     }
 

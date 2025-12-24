@@ -10,9 +10,11 @@ import DashboardTable from '../../../components/dashboard/DashboardTable';
 import Helmet from '../../../components/common/Helmet';
 import SearchBar from '../../../components/common/SearchBar';
 import FilterSelect from '../../../components/common/FilterSelect';
+import useUserInfo from '../../../hooks/useUserInfo';
 
 const ManageProducts = () => {
     const { user } = useAuth();
+    const { userInfo } = useUserInfo();
     const axiosSecure = useAxiosSecure();
     const [search, setSearch] = useState('');
     const [category, setCategory] = useState('All');
@@ -42,6 +44,8 @@ const ManageProducts = () => {
     });
 
     const handleDelete = (id) => {
+        if (userInfo.status === 'suspended') return;
+
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -129,15 +133,23 @@ const ManageProducts = () => {
                             <td>${product.price}</td>
                             <td><span className="badge badge-ghost">{product.category}</span></td>
                             <td className="flex gap-2">
-                                <Link to={`/dashboard/update-product/${product._id}`}>
-                                    <button className="btn btn-sm btn-square btn-ghost text-info" title="Update">
+                                {userInfo.status === 'suspended' ? (
+                                    <button disabled className="btn btn-sm btn-square btn-ghost text-gray-300 cursor-not-allowed" title="Suspended">
                                         <FaEdit className="text-lg" />
                                     </button>
-                                </Link>
+                                ) : (
+                                    <Link to={`/dashboard/update-product/${product._id}`}>
+                                        <button className="btn btn-sm btn-square btn-ghost text-info" title="Update">
+                                            <FaEdit className="text-lg" />
+                                        </button>
+                                    </Link>
+                                )}
+                                
                                 <button 
                                     onClick={() => handleDelete(product._id)}
-                                    className="btn btn-sm btn-square btn-ghost text-error"
-                                    title="Delete"
+                                    disabled={userInfo.status === 'suspended'}
+                                    className="btn btn-sm btn-square btn-ghost text-error disabled:text-gray-300 disabled:cursor-not-allowed"
+                                    title={userInfo.status === 'suspended' ? "Suspended" : "Delete"}
                                 >
                                     <FaTrash className="text-lg" />
                                 </button>

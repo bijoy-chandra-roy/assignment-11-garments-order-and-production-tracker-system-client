@@ -10,7 +10,7 @@ const ManagerRoute = ({ children }) => {
 
     if (roleLoading || isLoading) return <Loading />;
 
-    if (role === 'manager' && userInfo.status === 'active') {
+    if (role === 'manager') {
         return children;
     }
 
