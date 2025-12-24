@@ -1,12 +1,12 @@
 import React from 'react';
 import useRole from '../hooks/useRole';
-import useUserInfo from '../hooks/useUserInfo'; // 1. Import this
+import useUserInfo from '../hooks/useUserInfo';
 import Loading from '../components/common/Loading';
 import Forbidden from '../pages/error/Forbidden';
 
 const AdminManagerRoute = ({ children }) => {
     const { role, roleLoading } = useRole();
-    const { userInfo, isLoading } = useUserInfo(); // 2. Get user info
+    const { userInfo, isLoading } = useUserInfo();
 
     if (roleLoading || isLoading) return <Loading />;
 
