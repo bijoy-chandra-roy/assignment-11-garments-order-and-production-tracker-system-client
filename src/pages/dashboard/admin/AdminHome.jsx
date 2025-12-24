@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import useAuth from '../../../hooks/useAuth';
 import Loading from '../../../components/common/Loading';
+import FilterSelect from '../../../components/common/FilterSelect';
 import { FaUsers, FaBoxOpen, FaClipboardList, FaDollarSign } from 'react-icons/fa';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie } from 'recharts';
 
 const AdminHome = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
+    
+    const [filter, setFilter] = useState('All');
 
     const { data: stats = {}, isLoading } = useQuery({
-        queryKey: ['admin-stats'],
+        queryKey: ['admin-stats', filter],
         queryFn: async () => {
-            const res = await axiosSecure.get('/admin-stats');
+            const res = await axiosSecure.get(`/admin-stats?filter=${filter}`);
             return res.data;
         }
     });
@@ -32,14 +35,18 @@ const AdminHome = () => {
         { name: 'Users', value: stats.users }
     ];
 
-    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+    const filterOptions = [
+        { value: 'today', label: 'Today' },
+        { value: 'week', label: 'Last 7 Days' },
+        { value: 'month', label: 'Last 30 Days' }
+    ];
 
+    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
     const RADIAN = Math.PI / 180;
     const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
         const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
         const x = cx + radius * Math.cos(-midAngle * RADIAN);
         const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
         return (
             <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
                 {`${(percent * 100).toFixed(0)}%`}
@@ -49,14 +56,27 @@ const AdminHome = () => {
 
     return (
         <div className="p-4">
-            <h2 className="text-3xl font-bold mb-6">Admin Overview</h2>
-            <p className="text-gray-500 mb-8">Welcome back, {user?.displayName}</p>
-            
+            <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+                <div>
+                    <h2 className="text-3xl font-bold">Admin Overview</h2>
+                    <p className="text-gray-500">Welcome back, {user?.displayName}</p>
+                </div>
+                
+                <div className="mt-4 md:mt-0 w-52"> 
+                    <FilterSelect 
+                        options={filterOptions}
+                        value={filter}
+                        onChange={setFilter}
+                        defaultOption="All Time" 
+                    />
+                </div>
+            </div>
+                        
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                 <div className="bg-base-200 text-secondary rounded-2xl shadow-lg border border-base-200 p-6 grid grid-cols-[1fr_auto] items-center">
                     <div>
                         <div className="font-bold text-gray-500 mb-1">Revenue</div>
-                        <div className="text-3xl font-bold text-primary">${stats.revenue}</div>
+                        <div className="text-3xl font-bold text-primary">${stats.revenue?.toFixed(2)}</div>
                     </div>
                     <div className="text-primary">
                         <FaDollarSign className="text-4xl" />
@@ -95,7 +115,6 @@ const AdminHome = () => {
             </div>
 
             <div className="flex flex-col lg:flex-row gap-8">
-
                 <div className="w-full lg:flex-1 min-w-0 h-[400px] bg-base-200 p-4 rounded-2xl shadow-xl border border-base-200 flex flex-col">
                     <h3 className="text-xl font-bold mb-6 text-center">System Activity</h3>
                     <div className="flex-1 w-full min-h-0">
