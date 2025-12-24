@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router';
 import useAuth from '../../hooks/useAuth';
 import Swal from 'sweetalert2';
 import SocialLogin from '../../components/auth/SocialLogin';
 import Helmet from '../../components/common/Helmet';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Login = () => {
     const {
@@ -17,6 +18,7 @@ const Login = () => {
     const { signIn, user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    const [showPassword, setShowPassword] = useState(false);
 
     const from = location.state?.from?.pathname || "/";
 
@@ -76,12 +78,21 @@ const Login = () => {
                         <label className="label pt-0">
                             <span className="label-text font-bold">Password</span>
                         </label>
-                        <input
-                            type="password"
-                            placeholder="Enter your password"
-                            className="input input-bordered w-full h-11 focus:input-primary"
-                            {...register("password", { required: true })}
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Enter your password"
+                                className="input input-bordered w-full h-11 focus:input-primary"
+                                {...register("password", { required: true })}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/60 hover:text-primary transition-colors cursor-pointer z-10"
+                            >
+                                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            </button>
+                        </div>
                         {errors.password && (isSubmitted || errors.password.type !== 'required') && (
                             <span className="text-red-500 text-xs mt-1 block">Password is required</span>
                         )}

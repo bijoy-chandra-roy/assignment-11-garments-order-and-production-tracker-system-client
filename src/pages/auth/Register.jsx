@@ -7,6 +7,7 @@ import useAxios from '../../hooks/useAxios';
 import { uploadImage } from '../../utilities/imageUpload';
 import SocialLogin from '../../components/auth/SocialLogin';
 import Helmet from '../../components/common/Helmet';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Register = () => {
     const {
@@ -23,6 +24,7 @@ const Register = () => {
     const location = useLocation();
     const axiosPublic = useAxios();
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const from = location.state?.from?.pathname || "/";
 
@@ -40,7 +42,7 @@ const Register = () => {
                 email: data.email,
                 role: data.role,
                 image: imageUrl,
-                status: 'pending'
+                status: data.role === 'buyer' ? 'active' : 'pending'
             };
 
             const res = await axiosPublic.post('/users', userInfo);
@@ -142,22 +144,31 @@ const Register = () => {
                         <label className="label pt-0">
                             <span className="label-text font-bold">Password</span>
                         </label>
-                        <input
-                            type="password"
-                            placeholder="Enter your password"
-                            className="input input-bordered w-full h-11 focus:input-primary"
-                            {...register("password", {
-                                required: "Password is required",
-                                minLength: {
-                                    value: 6,
-                                    message: "Password must be at least 6 characters"
-                                },
-                                pattern: {
-                                    value: /(?=.*[a-z])(?=.*[A-Z])/,
-                                    message: "Must have uppercase and lowercase"
-                                }
-                            })}
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Enter your password"
+                                className="input input-bordered w-full h-11 focus:input-primary"
+                                {...register("password", {
+                                    required: "Password is required",
+                                    minLength: {
+                                        value: 6,
+                                        message: "Password must be at least 6 characters"
+                                    },
+                                    pattern: {
+                                        value: /(?=.*[a-z])(?=.*[A-Z])/,
+                                        message: "Must have uppercase and lowercase"
+                                    }
+                                })}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/60 hover:text-primary transition-colors cursor-pointer z-10"
+                            >
+                                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            </button>
+                        </div>
                         {errors.password && (
                             (errors.password.type === 'required' && !isSubmitted) ? null :
                                 <span className="text-red-500 text-xs mt-1 block">{errors.password.message}</span>

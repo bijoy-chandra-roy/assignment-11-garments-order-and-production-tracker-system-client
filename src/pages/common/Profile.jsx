@@ -4,6 +4,7 @@ import useRole from '../../hooks/useRole';
 import useUserInfo from '../../hooks/useUserInfo';
 import Helmet from '../../components/common/Helmet';
 import { formatDate } from '../../utilities/dateFormat';
+import { FaClock } from 'react-icons/fa';
 
 const Profile = () => {
     const { user, logOut } = useAuth();
@@ -46,6 +47,16 @@ const Profile = () => {
                         </div>
                     )}
 
+                    {userInfo.status === 'pending' && (
+                        <div role="alert" className="alert alert-warning mb-6 text-left shadow-lg">
+                            <FaClock className="text-xl" />
+                            <div>
+                                <h3 className="font-bold">Approval Pending</h3>
+                                <div className="text-sm opacity-90">Your account is waiting for admin approval. You may have limited access.</div>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="divider"></div>
 
                     <div className="w-full space-y-2 text-left mb-6">
@@ -53,6 +64,15 @@ const Profile = () => {
                             <span className="font-semibold">Last Login:</span>
                             <span className="text-sm opacity-70">
                                 {formatDate(user?.metadata?.lastSignInTime)}
+                            </span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="font-semibold">Account Status:</span>
+                            <span className={`text-sm font-bold capitalize ${
+                                userInfo.status === 'active' ? 'text-success' : 
+                                userInfo.status === 'suspended' ? 'text-error' : 'text-warning'
+                            }`}>
+                                {userInfo.status}
                             </span>
                         </div>
                     </div>

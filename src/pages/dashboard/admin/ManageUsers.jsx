@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Loading from '../../../components/common/Loading';
-import { FaTrash, FaUsers, FaSearch, FaBan, FaCheckCircle } from 'react-icons/fa';
+import { FaTrash, FaSearch, FaBan, FaCheckCircle, FaEdit, FaUserClock } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import DashboardTable from '../../../components/dashboard/DashboardTable';
 import Helmet from '../../../components/common/Helmet';
 import SuspendUserModal from '../../../components/dashboard/SuspendUserModal';
+import UpdateUserModal from '../../../components/dashboard/UpdateUserModal';
 
 const ManageUsers = () => {
     const axiosSecure = useAxiosSecure();
@@ -14,6 +15,7 @@ const ManageUsers = () => {
     const [filter, setFilter] = useState('all');
     
     const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false);
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -26,34 +28,47 @@ const ManageUsers = () => {
         placeholderData: keepPreviousData, 
     });
 
-    const filteredUsers = users.filter(user => {
-        if (filter === 'all') return true;
-        return user.role === filter;
-    });
-
-    const handleMakeAdmin = (user) => {
-        axiosSecure.patch(`/users/admin/${user._id}`)
-            .then(res => {
-                if (res.data.modifiedCount > 0) {
-                    refetch();
-                    Swal.fire({
-                        icon: "success",
-                        title: `${user.name} is an Admin Now!`,
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                }
-            })
-    }
+    const openUpdateModal = (user) => {
+        setSelectedUser(user);
+        setIsUpdateModalOpen(true);
+    };
 
     const openSuspendModal = (user) => {
         setSelectedUser(user);
         setIsSuspendModalOpen(true);
     };
 
-    const closeSuspendModal = () => {
+    const closeModals = () => {
         setIsSuspendModalOpen(false);
+        setIsUpdateModalOpen(false);
         setSelectedUser(null);
+    };
+
+    const handleUpdateSubmit = async (data) => {
+        setIsSubmitting(true);
+        try {
+            const res = await axiosSecure.patch(`/users/update/${selectedUser._id}`, {
+                role: data.role,
+                status: data.status
+            });
+
+            if (res.data.modifiedCount > 0) {
+                refetch();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'User Updated',
+                    text: `Role set to ${data.role} and Status is ${data.status}`,
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                closeModals();
+            }
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Error', 'Failed to update user', 'error');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleSuspendSubmit = async (data) => {
@@ -74,7 +89,7 @@ const ManageUsers = () => {
                     timer: 1500,
                     showConfirmButton: false
                 });
-                closeSuspendModal();
+                closeModals();
             }
         } catch (error) {
             console.error(error);
@@ -124,12 +139,18 @@ const ManageUsers = () => {
         });
     }
 
+    const filteredUsers = users.filter(user => {
+        if (filter === 'all') return true;
+        if (filter === 'pending') return user.status === 'pending';
+        return user.role === filter;
+    });
+
     if (isLoading) return <Loading />;
 
     return (
         <>
             <DashboardTable 
-                title="All Users" 
+                title="Manage Users" 
                 headerAction={
                     <div className="flex flex-col md:flex-row gap-4 items-center">
                         <h2 className="text-xl font-bold whitespace-nowrap">Total: {filteredUsers.length}</h2>
@@ -140,9 +161,10 @@ const ManageUsers = () => {
                             onChange={(e) => setFilter(e.target.value)}
                         >
                             <option value="all">All Roles</option>
-                            <option value="admin">Admin</option>
+                            <option value="pending">Pending Approval</option>
                             <option value="manager">Manager</option>
                             <option value="buyer">Buyer</option>
+                            <option value="admin">Admin</option>
                         </select>
 
                         <label className="input input-bordered flex items-center gap-2">
@@ -186,11 +208,23 @@ const ManageUsers = () => {
                                 <td>
                                     {user.status === 'suspended' ? (
                                         <span className="badge badge-error text-white font-bold">Suspended</span>
+                                    ) : user.status === 'pending' ? (
+                                        <span className="badge badge-warning gap-1 font-bold">
+                                            <FaUserClock /> Pending
+                                        </span>
                                     ) : (
                                         <span className="badge badge-success text-white font-bold">Active</span>
                                     )}
                                 </td>
                                 <td className="flex gap-2">
+                                    <button
+                                        onClick={() => openUpdateModal(user)}
+                                        className="btn btn-sm btn-primary text-black"
+                                        title="Edit Role or Approve"
+                                    >
+                                        <FaEdit /> {user.status === 'pending' ? 'Approve' : 'Edit'}
+                                    </button>
+
                                     {user.role !== 'admin' && (
                                         user.status === 'suspended' ? (
                                             <button 
@@ -208,15 +242,6 @@ const ManageUsers = () => {
                                             </button>
                                         )
                                     )}
-                                    
-                                    {user.role !== 'admin' && (
-                                        <button
-                                            onClick={() => handleMakeAdmin(user)}
-                                            className="btn btn-sm btn-square bg-orange-500 text-white"
-                                            title="Make Admin">
-                                            <FaUsers />
-                                        </button>
-                                    )}
 
                                     <button
                                         onClick={() => handleDeleteUser(user)}
@@ -233,9 +258,17 @@ const ManageUsers = () => {
 
             <SuspendUserModal 
                 isOpen={isSuspendModalOpen}
-                onClose={closeSuspendModal}
+                onClose={closeModals}
                 user={selectedUser}
                 onSubmit={handleSuspendSubmit}
+                isSubmitting={isSubmitting}
+            />
+
+            <UpdateUserModal
+                isOpen={isUpdateModalOpen}
+                onClose={closeModals}
+                user={selectedUser}
+                onSubmit={handleUpdateSubmit}
                 isSubmitting={isSubmitting}
             />
         </>
