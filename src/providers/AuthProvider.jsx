@@ -11,22 +11,38 @@ const AuthProvider = ({ children }) => {
 
     const createUser = (email, password) => {
         setLoading(true);
-        return createUserWithEmailAndPassword(auth, email, password);
+        return createUserWithEmailAndPassword(auth, email, password)
+            .catch(error => {
+                setLoading(false);
+                throw error;
+            });
     }
 
     const signIn = (email, password) => {
         setLoading(true);
-        return signInWithEmailAndPassword(auth, email, password);
+        return signInWithEmailAndPassword(auth, email, password)
+            .catch(error => {
+                setLoading(false);
+                throw error;
+            });
     }
 
     const googleSignIn = () => {
         setLoading(true);
-        return signInWithPopup(auth, googleProvider);
+        return signInWithPopup(auth, googleProvider)
+            .catch(error => {
+                setLoading(false);
+                throw error;
+            });
     }
 
     const logOut = () => {
         setLoading(true);
-        return signOut(auth);
+        return signOut(auth)
+            .catch(error => {
+                setLoading(false);
+                throw error;
+            });
     }
 
     const updateUserProfile = (name, photo) => {
