@@ -6,7 +6,7 @@ import Forbidden from '../pages/error/Forbidden';
 
 const AdminManagerRoute = ({ children }) => {
     const { role, roleLoading } = useRole();
-    const { userInfo, isLoading } = useUserInfo();
+    const { isLoading } = useUserInfo();
 
     if (roleLoading || isLoading) return <Loading />;
 
