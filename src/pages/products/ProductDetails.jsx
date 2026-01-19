@@ -7,6 +7,7 @@ import useRole from '../../hooks/useRole';
 import useAxios from '../../hooks/useAxios';
 import { FaStar, FaBoxOpen, FaTag, FaDollarSign, FaMoneyBillWave, FaPlayCircle } from 'react-icons/fa';
 import Helmet from '../../components/common/Helmet';
+import ProductCard from '../../components/products/ProductCard';
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -19,6 +20,15 @@ const ProductDetails = () => {
         queryKey: ['product', id],
         queryFn: async () => {
             const res = await axiosPublic.get(`/products/${id}`);
+            return res.data;
+        }
+    });
+
+    const { data: relatedData } = useQuery({
+        queryKey: ['related-products', product?.category, id],
+        enabled: !!product?.category,
+        queryFn: async () => {
+            const res = await axiosPublic.get(`/products?category=${product.category}&size=5`);
             return res.data;
         }
     });
@@ -41,6 +51,7 @@ const ProductDetails = () => {
         : product.image;
 
     const canOrder = !user || (role !== 'admin' && role !== 'manager');
+    const relatedProducts = relatedData?.products?.filter(p => p._id !== _id).slice(0, 4) || [];
 
     return (
         <div className="max-w-7xl min-h-screen mx-auto px-4 py-12 bg-base-100">
@@ -158,6 +169,18 @@ const ProductDetails = () => {
                     </div>
                 </div>
             </div>
+
+            {relatedProducts.length > 0 && (
+                <div className="mt-20">
+                    <div className="divider mb-12"></div>
+                    <h2 className="text-3xl font-bold mb-8 text-center">Related Products</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {relatedProducts.map((item) => (
+                            <ProductCard key={item._id} product={item} />
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

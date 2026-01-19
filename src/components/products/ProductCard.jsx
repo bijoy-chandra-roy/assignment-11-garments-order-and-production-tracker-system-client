@@ -5,7 +5,7 @@ const ProductCard = ({ product }) => {
     const { _id, name, image, category, price, quantity } = product;
 
     return (
-        <div className="card bg-base-200 shadow-xl hover:shadow-2xl transition-all duration-300 border border-base-200 group">
+        <div className="card bg-base-200 shadow-xl hover:shadow-2xl hover:border-3 hover:border-primary transition-all duration-300 border border-base-200 group">
             <figure className="h-64 overflow-hidden relative">
                 <img
                     src={image || product.images[0]}
