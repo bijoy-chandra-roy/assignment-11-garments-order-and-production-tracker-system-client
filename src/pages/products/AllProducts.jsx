@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import ProductCard from '../../components/products/ProductCard';
-import Loading from '../../components/common/Loading';
+import ProductCardSkeleton from '../../components/products/ProductCardSkeleton';
 import useAxios from '../../hooks/useAxios';
 import { FaSearch, FaFilter, FaSortAmountDown, FaDollarSign } from 'react-icons/fa';
 import Helmet from '../../components/common/Helmet';
@@ -63,8 +63,6 @@ const AllProducts = () => {
         if (currentPage < numberOfPages - 1) setCurrentPage(currentPage + 1);
     }
 
-    if (isLoading) return <Loading />;
-
     return (
         <div className="max-w-7xl mx-auto px-4 py-12">
             <Helmet title="Our Collection" />
@@ -89,8 +87,6 @@ const AllProducts = () => {
                         </div>
 
                         <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-
-                            {/* --- New Price Range Filter --- */}
                             <div className="dropdown dropdown-end">
                                 <div
                                     tabIndex={0}
@@ -186,9 +182,12 @@ const AllProducts = () => {
                 </div>
             </div>
 
-            {/* FIX 2: lg:grid-cols-4 for 4 columns on desktop */}
-            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 min-h-[400px] transition-opacity duration-200 ${isFetching ? 'opacity-50' : 'opacity-100'}`}>
-                {products.length > 0 ? (
+            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 min-h-[400px] transition-opacity duration-200 ${isFetching && !isLoading ? 'opacity-50' : 'opacity-100'}`}>
+                {isLoading ? (
+                    [...Array(8)].map((_, index) => (
+                        <ProductCardSkeleton key={index} />
+                    ))
+                ) : products.length > 0 ? (
                     products.map(product => (
                         <ProductCard key={product._id} product={product} />
                     ))
@@ -197,7 +196,7 @@ const AllProducts = () => {
                 )}
             </div>
 
-            {count > 0 && (
+            {count > 0 && !isLoading && (
                 <div className="flex flex-col items-center justify-center mt-12 gap-4">
                     <div className="flex gap-2">
                         <button onClick={handlePrevPage} className="btn btn-outline" disabled={currentPage === 0}>Prev</button>
