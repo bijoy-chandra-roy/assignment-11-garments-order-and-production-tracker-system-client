@@ -3,7 +3,7 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import ProductCard from '../../components/products/ProductCard';
 import Loading from '../../components/common/Loading';
 import useAxios from '../../hooks/useAxios';
-import { FaSearch, FaFilter, FaSortAmountDown } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaSortAmountDown, FaDollarSign } from 'react-icons/fa';
 import Helmet from '../../components/common/Helmet';
 
 const AllProducts = () => {
@@ -12,15 +12,18 @@ const AllProducts = () => {
     const [search, setSearch] = useState('');
     const [sort, setSort] = useState('');
     const [category, setCategory] = useState('');
+    const [minPrice, setMinPrice] = useState('');
+    const [maxPrice, setMaxPrice] = useState('');
     const [currentPage, setCurrentPage] = useState(0);
-    const [itemsPerPage, setItemsPerPage] = useState(6);
+    
+    const [itemsPerPage, setItemsPerPage] = useState(8);
 
     const categories = ["Jacket", "T-Shirt", "Pants", "Coat", "Hoodie", "Accessories"];
 
     const { data, isLoading, isFetching } = useQuery({
-        queryKey: ['products', search, currentPage, itemsPerPage, sort, category],
+        queryKey: ['products', search, currentPage, itemsPerPage, sort, category, minPrice, maxPrice],
         queryFn: async () => {
-            const res = await axiosPublic.get(`/products?search=${search}&page=${currentPage}&size=${itemsPerPage}&sort=${sort}&category=${category}`);
+            const res = await axiosPublic.get(`/products?search=${search}&page=${currentPage}&size=${itemsPerPage}&sort=${sort}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}`);
             return res.data;
         },
         placeholderData: keepPreviousData,
@@ -36,9 +39,19 @@ const AllProducts = () => {
         setCurrentPage(0);
     };
 
+    const handlePriceChange = (e, type) => {
+        const val = e.target.value;
+        if (type === 'min') setMinPrice(val);
+        if (type === 'max') setMaxPrice(val);
+        setCurrentPage(0);
+    };
+
     const handleReset = () => {
         setCategory('');
         setSort('');
+        setMinPrice('');
+        setMaxPrice('');
+        setSearch('');
         setCurrentPage(0);
     };
 
@@ -77,6 +90,38 @@ const AllProducts = () => {
 
                         <div className="flex items-center gap-2 w-full md:w-auto justify-end">
 
+                            {/* --- New Price Range Filter --- */}
+                            <div className="dropdown dropdown-end">
+                                <div
+                                    tabIndex={0}
+                                    role="button"
+                                    className={`btn btn-circle btn-ghost border border-base-300 dark:border-base-content/30 ${(minPrice || maxPrice) ? 'text-primary bg-primary/10 border-primary' : ''}`}
+                                    title="Filter Price"
+                                >
+                                    <FaDollarSign />
+                                </div>
+                                <div tabIndex={0} className="dropdown-content z-[1] menu p-4 shadow-lg bg-base-100 rounded-box w-64 border border-base-200">
+                                    <h3 className="font-bold mb-2 opacity-70">Price Range</h3>
+                                    <div className="flex gap-2 items-center">
+                                        <input 
+                                            type="number" 
+                                            placeholder="Min" 
+                                            className="input input-bordered input-sm w-full"
+                                            value={minPrice}
+                                            onChange={(e) => handlePriceChange(e, 'min')}
+                                        />
+                                        <span>-</span>
+                                        <input 
+                                            type="number" 
+                                            placeholder="Max" 
+                                            className="input input-bordered input-sm w-full"
+                                            value={maxPrice}
+                                            onChange={(e) => handlePriceChange(e, 'max')}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="dropdown dropdown-end">
                                 <div
                                     tabIndex={0}
@@ -97,7 +142,7 @@ const AllProducts = () => {
                                         <li key={idx}>
                                             <a
                                                 onClick={() => { setCategory(cat); setCurrentPage(0); }}
-                                                className={category === cat ? 'active font-bold' : ''}
+                                                className={category === cat ? 'active font-bold text-primary' : ''}
                                             >
                                                 {cat}
                                             </a>
@@ -127,7 +172,7 @@ const AllProducts = () => {
                                             High to Low
                                         </a>
                                     </li>
-                                    {(sort || category) && (
+                                    {(sort || category || minPrice || maxPrice) && (
                                         <li className="mt-2 border-t border-base-200">
                                             <a onClick={handleReset} className="text-error">
                                                 Clear Filters
@@ -141,7 +186,8 @@ const AllProducts = () => {
                 </div>
             </div>
 
-            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[400px] transition-opacity duration-200 ${isFetching ? 'opacity-50' : 'opacity-100'}`}>
+            {/* FIX 2: lg:grid-cols-4 for 4 columns on desktop */}
+            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 min-h-[400px] transition-opacity duration-200 ${isFetching ? 'opacity-50' : 'opacity-100'}`}>
                 {products.length > 0 ? (
                     products.map(product => (
                         <ProductCard key={product._id} product={product} />
