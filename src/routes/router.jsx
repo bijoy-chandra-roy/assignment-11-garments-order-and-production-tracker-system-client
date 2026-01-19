@@ -9,6 +9,8 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import NotFound from "../pages/error/NotFound";
 import About from "../pages/common/About";
 import Contact from "../pages/common/Contact";
+import PrivacyPolicy from "../pages/common/PrivacyPolicy";
+import TermsOfService from "../pages/common/TermsOfService";
 
 // Protected Routes
 import PrivateRoute from "./PrivateRoute";
@@ -45,6 +47,7 @@ import ProductDetails from "../pages/products/ProductDetails";
 import OrderPage from "../pages/order/OrderPage";
 import AdminManagerRoute from "./AdminManagerRoute";
 import AdminHome from "../pages/dashboard/admin/AdminHome";
+import Careers from "../pages/common/Careers";
 
 export const router = createBrowserRouter([
   {
@@ -55,6 +58,9 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: "about", element: <About /> },
       { path: "contact", element: <Contact /> },
+      { path: "privacy", element: <PrivacyPolicy /> },
+      { path: "terms", element: <TermsOfService /> },
+      { path: "careers", element: <Careers /> },
       { path: "products", element: <AllProducts /> },
       { 
         path: "products/:id", 

@@ -44,6 +44,12 @@ const Footer = () => {
                         <Link to="/careers" className="hover:text-primary hover:underline transition">
                             Careers
                         </Link>
+                        <Link to="/privacy" className="hover:text-primary hover:underline transition">
+                            Privacy Policy
+                        </Link>
+                        <Link to="/terms" className="hover:text-primary hover:underline transition">
+                            Terms of Service
+                        </Link>
                     </div>
                 </nav>
 
