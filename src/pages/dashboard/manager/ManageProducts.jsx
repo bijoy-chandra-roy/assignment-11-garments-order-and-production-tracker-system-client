@@ -125,7 +125,7 @@ const ManageProducts = () => {
                             <td>
                                 <div className="avatar">
                                     <div className="mask mask-squircle w-12 h-12">
-                                        <img src={product.image} alt={product.name} />
+                                        <img src={product.image || product.images[0]} alt={product.name} />
                                     </div>
                                 </div>
                             </td>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../../components/common/Loading';
@@ -23,10 +23,22 @@ const ProductDetails = () => {
         }
     });
 
+    const [activeImgIndex, setActiveImgIndex] = useState(0);
+
+    useEffect(() => {
+        if (product) {
+            setActiveImgIndex(0);
+        }
+    }, [product]);
+
     if (isLoading) return <Loading />;
     if (!product) return <div className="text-center py-20 text-2xl font-bold text-error">Product not found</div>;
 
-    const { _id, name, image, category, price, quantity, description, rating, paymentMethod, video } = product;
+    const { _id, name, category, price, quantity, description, rating, paymentMethod, video } = product;
+
+    const currentImage = product.images && product.images.length > 0 
+        ? product.images[activeImgIndex] 
+        : product.image;
 
     const canOrder = !user || (role !== 'admin' && role !== 'manager');
 
@@ -34,10 +46,33 @@ const ProductDetails = () => {
         <div className="max-w-7xl min-h-screen mx-auto px-4 py-12 bg-base-100">
             <Helmet title={product?.name || "Product Details"} />
             <div className="flex flex-col lg:flex-row gap-12">
-                <div className="flex-1">
+                
+                <div className="flex-1 space-y-4">
                     <div className="rounded-2xl overflow-hidden shadow-2xl border border-base-200 h-[500px]">
-                        <img src={image} alt={name} className="w-full h-full object-cover" />
+                        <img 
+                            src={currentImage} 
+                            alt={name} 
+                            className="w-full h-full object-cover transition-all duration-300" 
+                        />
                     </div>
+                    
+                    {product.images && product.images.length > 1 && (
+                        <div className="flex gap-4 overflow-x-auto pb-2">
+                            {product.images.map((img, idx) => (
+                                <button 
+                                    key={idx}
+                                    onClick={() => setActiveImgIndex(idx)}
+                                    className={`w-20 h-20 rounded-lg overflow-hidden border-4 flex-shrink-0 transition-all ${
+                                        activeImgIndex === idx 
+                                        ? 'border-primary scale-105 opacity-100' 
+                                        : 'border-transparent opacity-70 hover:opacity-100'
+                                    }`}
+                                >
+                                    <img src={img} alt={`thumb-${idx}`} className="w-full h-full object-cover" />
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex-1 space-y-6">
@@ -110,7 +145,7 @@ const ProductDetails = () => {
                                 </div>
                             ) : canOrder ? (
                                 quantity > 0 ? (
-                                    <Link to={`/order/${_id}`} className="btn btn-primary ...">Order Now</Link>
+                                    <Link to={`/order/${_id}`} className="btn btn-primary w-full">Order Now</Link>
                                 ) : (
                                     <button disabled className="btn btn-error w-full">Out of Stock</button>
                                 )

@@ -66,7 +66,7 @@ const OrderPage = () => {
             orderDate: new Date(),
             status: 'Pending',
             productId: product._id,
-            productImage: product.image,
+            productImage: product.image || product.images[0],
             productName: product.name,
             email: user?.email,
             userName: `${data.firstName} ${data.lastName}`,

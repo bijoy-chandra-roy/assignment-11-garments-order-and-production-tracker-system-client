@@ -8,7 +8,7 @@ const ProductCard = ({ product }) => {
         <div className="card bg-base-200 shadow-xl hover:shadow-2xl transition-all duration-300 border border-base-200 group">
             <figure className="h-64 overflow-hidden relative">
                 <img
-                    src={image}
+                    src={image || product.images[0]}
                     alt={name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
