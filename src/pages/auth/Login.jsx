@@ -11,6 +11,7 @@ const Login = () => {
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors, isSubmitted }
     } = useForm({
         mode: 'onChange'
@@ -49,6 +50,12 @@ const Login = () => {
                     text: error.message,
                 });
             })
+    };
+
+    const handleDemoLogin = () => {
+        setValue("email", "demo@user.com");
+        setValue("password", "Demo1234");
+        handleSubmit(onSubmit)();
     };
 
     return (
@@ -107,6 +114,16 @@ const Login = () => {
                                 Forgot password?
                             </a>
                         </div>
+                    </div>
+
+                    <div className="form-control mt-2">
+                        <button
+                            type="button"
+                            onClick={handleDemoLogin}
+                            className="btn btn-outline w-full"
+                        >
+                            Guest Login (Demo)
+                        </button>
                     </div>
 
                     <div className="form-control pt-2">
